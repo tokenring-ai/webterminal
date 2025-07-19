@@ -1,37 +1,59 @@
 {
-  "name": "@token-ring/web-terminal",
-  "version": "0.0.1",
-  "dependencies": {
-    "@auth/express": "0.11.0",
-    "@monaco-editor/react": "^4.4.6",
-    "@tailwindcss/postcss": "^4.1.10",
-    "clsx": "^2.1.1",
-    "cookie-parser": "^1.4.6",
-    "dotenv": "^16.0.3",
-    "express": "^5.1.0",
-    "framer-motion": "^12.16.0",
-    "lucide-react": "^0.514.0",
-    "next-auth": "^4.24.11",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "uuid": "^11.1.0",
-    "zustand": "5.0.6",
-    "@token-ring/eslint-config": "0.0.0"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-react": "^4.2.1",
-    "autoprefixer": "^10.4.17",
-    "postcss": "^8.4.40",
-    "tailwindcss": "^4.1.10",
-    "vite": "6.3.5"
-  },
-  "private": true,
-  "scripts": {
-    "auth": "node server.js",
-    "build": "vite build",
-    "dev": "vite",
-    "preview": "vite preview",
-    "eslint": "eslint --fix ./"
-  },
-  "type": "module"
+	"name": "@token-ring/web-terminal",
+	"version": "0.0.1",
+	"dependencies": {
+		"@auth/express": "0.11.0",
+		"@monaco-editor/react": "^4.4.6",
+		"@tailwindcss/postcss": "^4.1.10",
+		"@token-ring/ai-client": "0.1.0",
+		"@token-ring/browser-chat-storage": "0.1.0",
+		"@token-ring/browser-file-system": "0.1.0",
+		"@token-ring/chat": "0.1.0",
+		"@token-ring/codebase": "0.1.0",
+  "@token-ring/config": "0.1.0",
+		"@token-ring/eslint-config": "0.0.0",
+		"@token-ring/filesystem": "0.1.0",
+		"@token-ring/history": "0.1.0",
+		"@token-ring/memory": "0.1.0",
+		"@token-ring/planner": "0.1.0",
+		"@token-ring/queue": "0.1.0",
+		"@token-ring/registry": "0.1.0",
+		"@token-ring/testing": "0.1.0",
+		"@token-ring/workflow": "0.1.0",
+		"biome": "^0.3.3",
+		"clsx": "^2.1.1",
+		"cookie-parser": "^1.4.6",
+		"dotenv": "^16.0.3",
+		"express": "^5.1.0",
+		"framer-motion": "^12.16.0",
+		"husky": "^9.1.7",
+		"lucide-react": "^0.514.0",
+		"next-auth": "^4.24.11",
+		"react": "^19.1.0",
+		"react-dom": "^19.1.0",
+		"trufflehog": "^0.0.5",
+		"uuid": "^11.1.0",
+		"zustand": "5.0.6"
+	},
+	"devDependencies": {
+		"@vitejs/plugin-react": "^4.2.1",
+		"autoprefixer": "^10.4.17",
+		"postcss": "^8.4.40",
+		"tailwindcss": "^4.1.10",
+		"vite": "6.3.5"
+	},
+	"private": true,
+	"scripts": {
+		"preinstall": "test -f pkg/ai-client/package.json || echo 'Updating git submodules...' && git submodule update --init --recursive",
+		"auth": "node server.js",
+		"build": "vite build",
+		"dev": "vite",
+		"preview": "vite preview",
+		"eslint": "eslint --fix ./",
+		"prepare": "husky"
+	},
+	"type": "module",
+	"workspaces": [
+		"pkg/*"
+	]
 }

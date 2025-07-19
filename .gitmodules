@@ -1,0 +1,71 @@
+[submodule "pkg/ai-client"]
+	path = pkg/ai-client
+	url = git@github.com:Token-Ring/ai-client
+	branch = main
+[submodule "pkg/chat"]
+	path = pkg/chat
+	url = git@github.com:Token-Ring/chat
+	branch = main
+[submodule "pkg/codebase"]
+	path = pkg/codebase
+	url = git@github.com:Token-Ring/codebase
+	branch = main
+[submodule "pkg/eslint-config"]
+	path = pkg/eslint-config
+	url = git@github.com:Token-Ring/eslint-config
+	branch = main
+[submodule "pkg/filesystem"]
+	path = pkg/filesystem
+	url = git@github.com:Token-Ring/filesystem
+	branch = main
+[submodule "pkg/history"]
+	path = pkg/history
+	url = git@github.com:Token-Ring/history
+	branch = main
+[submodule "pkg/memory"]
+	path = pkg/memory
+	url = git@github.com:Token-Ring/memory
+	branch = main
+[submodule "pkg/planner"]
+	path = pkg/planner
+	url = git@github.com:Token-Ring/planner
+	branch = main
+[submodule "pkg/queue"]
+	path = pkg/queue
+	url = git@github.com:Token-Ring/queue
+	branch = main
+[submodule "pkg/registry"]
+	path = pkg/registry
+	url = git@github.com:Token-Ring/registry
+	branch = main
+[submodule "pkg/sqlite-storage"]
+	path = pkg/sqlite-storage
+	url = git@github.com:Token-Ring/sqlite-storage
+	branch = main
+[submodule "pkg/testing"]
+	path = pkg/testing
+	url = git@github.com:Token-Ring/testing
+	branch = main
+[submodule "pkg/workflow"]
+	path = pkg/workflow
+	url = git@github.com:Token-Ring/workflow
+	branch = main
+[submodule "pkg/utility"]
+	path = pkg/utility
+	url = git@github.com:Token-Ring/utility.git
+	branch = main
+[submodule "pkg/runnable"]
+	path = pkg/runnable
+	url = git@github.com:Token-Ring/runnable.git
+	branch = main
+[submodule "pkg/browser-chat-storage"]
+	path = pkg/browser-chat-storage
+	url = git@github.com:Token-Ring/browser-chat-storage.git
+	branch = main
+[submodule "pkg/browser-file-system"]
+	path = pkg/browser-file-system
+	url = git@github.com:Token-Ring/browser-file-system.git
+	branch = main
+[submodule "pkg/config"]
+	path = pkg/config
+	url = git@github.com:Token-Ring/config.git

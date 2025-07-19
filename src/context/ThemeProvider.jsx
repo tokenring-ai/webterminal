@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from "react";
 
-const ThemeContext = createContext({ theme: 'light', setTheme: () => {} });
+const ThemeContext = createContext({ theme: "light", setTheme: () => {} });
 
 /**
  * Provides light/dark theme state across the application.
@@ -8,29 +8,31 @@ const ThemeContext = createContext({ theme: 'light', setTheme: () => {} });
  * @param {{children: React.ReactNode}} props
  */
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(() => {
-    if (typeof window === 'undefined') return 'light';
-    const stored = localStorage.getItem('theme');
-    if (stored) return stored;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  });
+	const [theme, setTheme] = useState(() => {
+		if (typeof window === "undefined") return "light";
+		const stored = localStorage.getItem("theme");
+		if (stored) return stored;
+		return window.matchMedia("(prefers-color-scheme: dark)").matches
+			? "dark"
+			: "light";
+	});
 
-  useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    localStorage.setItem('theme', theme);
-  }, [theme]);
+	useEffect(() => {
+		if (theme === "dark") {
+			document.documentElement.classList.add("dark");
+		} else {
+			document.documentElement.classList.remove("dark");
+		}
+		localStorage.setItem("theme", theme);
+	}, [theme]);
 
-  return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
-      {children}
-    </ThemeContext.Provider>
-  );
+	return (
+		<ThemeContext.Provider value={{ theme, setTheme }}>
+			{children}
+		</ThemeContext.Provider>
+	);
 }
 
 export function useTheme() {
-  return useContext(ThemeContext);
+	return useContext(ThemeContext);
 }

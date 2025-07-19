@@ -35,6 +35,3 @@ npm run build
 │   └── main.jsx     # Vite entry
 └── index.html
 ```
-
----
-Generated 2025-06-21T00:49:38.503060 by ChatGPT.
