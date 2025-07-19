@@ -10,7 +10,7 @@
 		"@token-ring/browser-file-system": "0.1.0",
 		"@token-ring/chat": "0.1.0",
 		"@token-ring/codebase": "0.1.0",
-  "@token-ring/config": "0.1.0",
+		"@token-ring/config": "0.1.0",
 		"@token-ring/eslint-config": "0.0.0",
 		"@token-ring/filesystem": "0.1.0",
 		"@token-ring/history": "0.1.0",
