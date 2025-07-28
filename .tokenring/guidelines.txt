@@ -1,0 +1,4 @@
+- The project is an npm monorepo with packages in pkg/
+- The project is in vanilla javascript with JSDoc documentation, not typescript
+- The project uses ES modules, and is a frontend project using Vite, React, Tailwind CSS, framer-motion, lucide-react
+- The UI files are located in src/, and token-ring packages are in pkg/
