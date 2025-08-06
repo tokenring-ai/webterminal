@@ -1,71 +1,72 @@
 [submodule "pkg/ai-client"]
 	path = pkg/ai-client
 	url = git@github.com:tokenring-ai/ai-client
-	branch = main
+	branch = origin/main
 [submodule "pkg/chat"]
 	path = pkg/chat
 	url = git@github.com:tokenring-ai/chat
-	branch = main
+	branch = origin/main
 [submodule "pkg/codebase"]
 	path = pkg/codebase
 	url = git@github.com:tokenring-ai/codebase
-	branch = main
+	branch = origin/main
 [submodule "pkg/eslint-config"]
 	path = pkg/eslint-config
 	url = git@github.com:tokenring-ai/eslint-config
-	branch = main
+	branch = origin/main
 [submodule "pkg/filesystem"]
 	path = pkg/filesystem
 	url = git@github.com:tokenring-ai/filesystem
-	branch = main
+	branch = origin/main
 [submodule "pkg/history"]
 	path = pkg/history
 	url = git@github.com:tokenring-ai/history
-	branch = main
+	branch = origin/main
 [submodule "pkg/memory"]
 	path = pkg/memory
 	url = git@github.com:tokenring-ai/memory
-	branch = main
+	branch = origin/main
 [submodule "pkg/planner"]
 	path = pkg/planner
 	url = git@github.com:tokenring-ai/planner
-	branch = main
+	branch = origin/main
 [submodule "pkg/queue"]
 	path = pkg/queue
 	url = git@github.com:tokenring-ai/queue
-	branch = main
+	branch = origin/main
 [submodule "pkg/registry"]
 	path = pkg/registry
 	url = git@github.com:tokenring-ai/registry
-	branch = main
+	branch = origin/main
 [submodule "pkg/sqlite-storage"]
 	path = pkg/sqlite-storage
 	url = git@github.com:tokenring-ai/sqlite-storage
-	branch = main
+	branch = origin/main
 [submodule "pkg/testing"]
 	path = pkg/testing
 	url = git@github.com:tokenring-ai/testing
-	branch = main
+	branch = origin/main
 [submodule "pkg/workflow"]
 	path = pkg/workflow
 	url = git@github.com:tokenring-ai/workflow
-	branch = main
+	branch = origin/main
 [submodule "pkg/utility"]
 	path = pkg/utility
 	url = git@github.com:tokenring-ai/utility.git
-	branch = main
+	branch = origin/main
 [submodule "pkg/runnable"]
 	path = pkg/runnable
 	url = git@github.com:tokenring-ai/runnable.git
-	branch = main
+	branch = origin/main
 [submodule "pkg/browser-chat-storage"]
 	path = pkg/browser-chat-storage
 	url = git@github.com:tokenring-ai/browser-chat-storage.git
-	branch = main
+	branch = origin/main
 [submodule "pkg/browser-file-system"]
 	path = pkg/browser-file-system
 	url = git@github.com:tokenring-ai/browser-file-system.git
-	branch = main
+	branch = origin/main
 [submodule "pkg/config"]
 	path = pkg/config
 	url = git@github.com:tokenring-ai/config.git
+	branch = origin/main
