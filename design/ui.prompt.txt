@@ -1,0 +1,14 @@
+Design a modern, sleek dark mode ui for this app, focusing on using currently trending design styles
+WebTerminal
+A browser-Based AI Coding Terminal & File Explorer
+WebTerminal brings the power of terminal-based development to your browser with a modern, responsive interface and seamless remote resource access.
+Resizable, dockable terminal interface
+Integrated file explorer with remote support
+Light/dark mode with customizable themes
+Real-time collaboration and chat features
+A lightweight, client-side coding terminal built with React, Tailwind CSS, Framer Motion, and shadcn/ui style primitives.
+Features
+Resizable docked command terminal — anchored to bottom, left, and right with draggable top edge.
+Light & dark mode — toggles using Tailwind dark: utilities (localStorage.theme).
+Sidebar tabs — recent chats, file tree, and settings (model/tool selection).
+Command‑prompt UI — type /help, /model, etc., or arbitrary text (currently echoes back).
