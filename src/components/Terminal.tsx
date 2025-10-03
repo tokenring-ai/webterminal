@@ -1,6 +1,6 @@
-import React, {useEffect, useRef, useState} from "react";
-import {useAgentTeam} from "../context/AgentTeamProvider.js";
-import {useRepl} from "../hooks/useRepl.js";
+import React, { useEffect, useRef, useState } from "react";
+import { useAgentTeam } from "../context/AgentTeamProvider.js";
+import { useRepl } from "../hooks/useRepl.js";
 
 import type Agent from "@tokenring-ai/agent/Agent";
 
@@ -16,7 +16,7 @@ function Terminal({ height, onResize }: TerminalProps) {
 	useEffect(() => {
 		if (!team) return;
 		let agent: Agent | null = null;
-		team.createAgent("interactiveCodeAgent").then(a => {
+		team.createAgent("interactiveCodeAgent").then((a) => {
 			agent = a;
 			setTerminalAgent(a);
 		});
@@ -35,7 +35,8 @@ function Terminal({ height, onResize }: TerminalProps) {
 	} = useRepl(terminalAgent);
 
 	const [input, setInput] = useState("");
-	const [currentInputValueBeforeHistory, setCurrentInputValueBeforeHistory] = useState("");
+	const [currentInputValueBeforeHistory, setCurrentInputValueBeforeHistory] =
+		useState("");
 	const containerRef = useRef<HTMLDivElement>(null);
 	const resizeRef = useRef<number | null>(null);
 
@@ -78,7 +79,9 @@ function Terminal({ height, onResize }: TerminalProps) {
 		const handleMove = (ev: MouseEvent) => {
 			if (resizeRef.current === null) return;
 			const delta = resizeRef.current - ev.clientY;
-			onResize((h: number) => Math.min(window.innerHeight - 200, Math.max(100, h + delta)));
+			onResize((h: number) =>
+				Math.min(window.innerHeight - 200, Math.max(100, h + delta)),
+			);
 			resizeRef.current = ev.clientY;
 		};
 		const stop = () => {
@@ -98,7 +101,10 @@ function Terminal({ height, onResize }: TerminalProps) {
 	};
 
 	return (
-		<div className="bg-gray-900 border-t border-gray-700 flex flex-col" style={{ height: `${height}px` }}>
+		<div
+			className="bg-gray-900 border-t border-gray-700 flex flex-col"
+			style={{ height: `${height}px` }}
+		>
 			<div
 				onMouseDown={handleMouseDown}
 				className="flex items-center justify-between px-4 py-2 bg-gray-850 border-b border-gray-700 cursor-ns-resize"
@@ -107,24 +113,52 @@ function Terminal({ height, onResize }: TerminalProps) {
 					<div className="w-3 h-3 rounded-full bg-red-500" />
 					<div className="w-3 h-3 rounded-full bg-yellow-500" />
 					<div className="w-3 h-3 rounded-full bg-green-500" />
-					<span className="ml-2 text-sm font-medium text-gray-300">Terminal</span>
+					<span className="ml-2 text-sm font-medium text-gray-300">
+						Terminal
+					</span>
 				</div>
 				<div className="flex items-center space-x-2">
 					<button className="p-1 rounded hover:bg-gray-700 transition-colors">
-						<svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" />
+						<svg
+							className="w-4 h-4 text-gray-400"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+						>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth="2"
+								d="M4 6h16M4 12h16m-7 6h7"
+							/>
 						</svg>
 					</button>
 					<button className="p-1 rounded hover:bg-gray-700 transition-colors">
-						<svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+						<svg
+							className="w-4 h-4 text-gray-400"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+						>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth="2"
+								d="M19 9l-7 7-7-7"
+							/>
 						</svg>
 					</button>
 				</div>
 			</div>
-			<div ref={containerRef} className="flex-1 overflow-y-auto p-4 font-mono text-sm">
+			<div
+				ref={containerRef}
+				className="flex-1 overflow-y-auto p-4 font-mono text-sm"
+			>
 				{chunks.map((l: { kind: string; text: string }, i: number) => (
-					<div key={i} className={`mb-2 whitespace-pre-wrap ${typeToColor[l.kind] || "text-gray-300"}`}>
+					<div
+						key={i}
+						className={`mb-2 whitespace-pre-wrap ${typeToColor[l.kind] || "text-gray-300"}`}
+					>
 						{l.text}
 					</div>
 				))}
@@ -133,7 +167,10 @@ function Terminal({ height, onResize }: TerminalProps) {
 					<span className="text-white animate-pulse ml-1">_</span>
 				</div>
 			</div>
-			<form onSubmit={handleSubmit} className="border-t border-gray-700 p-2 flex items-center">
+			<form
+				onSubmit={handleSubmit}
+				className="border-t border-gray-700 p-2 flex items-center"
+			>
 				<span className="text-green-400 mr-2">$</span>
 				<input
 					type="text"
@@ -143,9 +180,22 @@ function Terminal({ height, onResize }: TerminalProps) {
 					className="flex-1 bg-transparent text-white outline-none"
 					placeholder="Type a command..."
 				/>
-				<button type="submit" className="ml-2 p-1 rounded hover:bg-gray-700 transition-colors">
-					<svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+				<button
+					type="submit"
+					className="ml-2 p-1 rounded hover:bg-gray-700 transition-colors"
+				>
+					<svg
+						className="w-5 h-5 text-gray-400"
+						fill="none"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
+					>
+						<path
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							strokeWidth="2"
+							d="M13 5l7 7-7 7M5 5l7 7-7 7"
+						/>
 					</svg>
 				</button>
 			</form>

@@ -1,19 +1,26 @@
 import AgentTeam from "@tokenring-ai/agent/AgentTeam";
 import * as AIClientPackage from "@tokenring-ai/ai-client";
-import {ModelRegistry} from "@tokenring-ai/ai-client";
-import {registerModels} from "@tokenring-ai/ai-client/models";
+import { ModelRegistry } from "@tokenring-ai/ai-client";
+import { registerModels } from "@tokenring-ai/ai-client/models";
 import * as models from "@tokenring-ai/ai-client/models"; // For default models
-import {BrowserChatHistoryService, BrowserCheckpointService, packageInfo as BrowserChatStoragePackage} from "pkg/browser-agent-storage";
-import {BrowserFileSystem, packageInfo as BrowserFileSystemPackage} from "@tokenring-ai/browser-file-system";
+import {
+	BrowserChatHistoryService,
+	BrowserCheckpointService,
+	packageInfo as BrowserChatStoragePackage,
+} from "pkg/browser-agent-storage";
+import {
+	BrowserFileSystem,
+	packageInfo as BrowserFileSystemPackage,
+} from "@tokenring-ai/browser-file-system";
 import ConfigurationManagementService from "@tokenring-ai/config/services/ConfigurationManagementService.js";
 import * as FilesystemPackage from "@tokenring-ai/filesystem";
 import * as HistoryPackage from "@tokenring-ai/history";
 import * as MemoryPackage from "@tokenring-ai/memory";
-import {ShortTermMemoryService} from "@tokenring-ai/memory";
+import { ShortTermMemoryService } from "@tokenring-ai/memory";
 import * as QueuePackage from "@tokenring-ai/queue";
-import {WorkQueueService} from "@tokenring-ai/queue";
-import {useEffect, useState} from "react";
-import {WebTerminalConfig} from "../config/config.types.js";
+import { WorkQueueService } from "@tokenring-ai/queue";
+import { useEffect, useState } from "react";
+import { WebTerminalConfig } from "../config/config.types.js";
 
 // Default personas, can be overridden by config
 const defaultPersonas = {
@@ -36,7 +43,9 @@ const defaultPersonas = {
  *        that can be used for namespacing browser storage.
  * @returns {{registry: Registry|null, error: Error|null, isLoading: boolean}}
  */
-export const useChat = (configServiceInstance: ConfigurationManagementService) => {
+export const useChat = (
+	configServiceInstance: ConfigurationManagementService,
+) => {
 	const [registry, setAgentTeam] = useState<AgentTeam | null>(null);
 	const [error, setError] = useState<Error | null>(null);
 
@@ -70,7 +79,7 @@ export const useChat = (configServiceInstance: ConfigurationManagementService) =
 				]);
 
 				const modelRegistry = new ModelRegistry();
-        await registerModels(actualConfig.models, modelRegistry);
+				await registerModels(actualConfig.models, modelRegistry);
 
 				agentTeam.services.register([configServiceInstance]);
 				agentTeam.services.register([modelRegistry]);
@@ -93,7 +102,7 @@ export const useChat = (configServiceInstance: ConfigurationManagementService) =
 		initialize();
 
 		return () => {
-      console.log("useChat: Cleanup chat environment.");
+			console.log("useChat: Cleanup chat environment.");
 			setAgentTeam(null); // Clear registry on cleanup
 			setError(null); // Clear error on cleanup as well
 		};

@@ -6,13 +6,13 @@
  */
 
 export default class WebOutputFormatter {
-	addLine: (line: {kind: string, text: string}) => void;
+	addLine: (line: { kind: string; text: string }) => void;
 	currentOutputType: string | null;
 
 	/**
 	 * @param {(line:{kind:LineKind,text:string})=>void} addLine
 	 */
-	constructor(addLine: (line: {kind: string, text: string}) => void) {
+	constructor(addLine: (line: { kind: string; text: string }) => void) {
 		this.addLine = addLine;
 		this.currentOutputType = null;
 	}

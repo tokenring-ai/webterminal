@@ -1,6 +1,9 @@
-import React, {createContext, useContext, useEffect, useState} from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
-const ThemeContext = createContext<{ theme: string; setTheme: (theme: string) => void }>({ theme: "light", setTheme: () => {} });
+const ThemeContext = createContext<{
+	theme: string;
+	setTheme: (theme: string) => void;
+}>({ theme: "light", setTheme: () => {} });
 
 /**
  * Provides light/dark theme state across the application.

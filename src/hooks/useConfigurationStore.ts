@@ -1,22 +1,22 @@
-import {useState} from "react";
-import {defaultChatConfig} from "../config/defaultChatConfig.js";
+import { useState } from "react";
+import { defaultChatConfig } from "../config/defaultChatConfig.js";
 
 export const useConfigurationStore = () => {
 	const [config, setConfig] = useState(defaultChatConfig);
 
 	const getConfiguration = () => config;
-	
+
 	const getConfigurationValue = (path: string) => {
-		const keys = path.split('.');
+		const keys = path.split(".");
 		let value: any = config;
 		for (const key of keys) {
 			value = value?.[key];
 		}
 		return value;
 	};
-	
+
 	const setConfigurationValue = (path: string, value: unknown) => {
-		const keys = path.split('.');
+		const keys = path.split(".");
 		setConfig((prev) => {
 			const newConfig = JSON.parse(JSON.stringify(prev));
 			let current: Record<string, unknown> = newConfig;
@@ -28,9 +28,9 @@ export const useConfigurationStore = () => {
 			return newConfig;
 		});
 	};
-	
+
 	const updateConfiguration = (updates: Record<string, unknown>) => {
-		setConfig(prev => ({ ...prev, ...updates }));
+		setConfig((prev) => ({ ...prev, ...updates }));
 	};
 
 	return {

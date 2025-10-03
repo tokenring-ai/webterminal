@@ -1,13 +1,19 @@
 import type Agent from "@tokenring-ai/agent/Agent";
-import React, {useEffect, useState} from "react";
-import {useAgentTeam} from "../context/AgentTeamProvider.tsx";
+import React, { useEffect, useState } from "react";
+import { useAgentTeam } from "../context/AgentTeamProvider.tsx";
 
 type Message = {
 	type: "user" | "assistant" | "system";
 	content: string;
 };
 
-const ChatInstance = ({ agentId, isActive }: { agentId: string; isActive: boolean }) => {
+const ChatInstance = ({
+	agentId,
+	isActive,
+}: {
+	agentId: string;
+	isActive: boolean;
+}) => {
 	const team = useAgentTeam();
 	const [agent, setAgent] = useState<Agent | null>(null);
 	const [messages, setMessages] = useState<Message[]>([]);
@@ -36,18 +42,27 @@ const ChatInstance = ({ agentId, isActive }: { agentId: string; isActive: boolea
 		if (!agent || !isActive) return;
 
 		const abortController = new AbortController();
-		
+
 		(async () => {
 			for await (const event of agent.events(abortController.signal)) {
 				switch (event.type) {
 					case "output.chat":
-						setMessages(prev => [...prev, { type: "assistant", content: event.data.content }]);
+						setMessages((prev) => [
+							...prev,
+							{ type: "assistant", content: event.data.content },
+						]);
 						break;
 					case "output.system":
-						setMessages(prev => [...prev, { type: "system", content: event.data.message }]);
+						setMessages((prev) => [
+							...prev,
+							{ type: "system", content: event.data.message },
+						]);
 						break;
 					case "input.received":
-						setMessages(prev => [...prev, { type: "user", content: event.data.message }]);
+						setMessages((prev) => [
+							...prev,
+							{ type: "user", content: event.data.message },
+						]);
 						break;
 				}
 			}
@@ -69,7 +84,10 @@ const ChatInstance = ({ agentId, isActive }: { agentId: string; isActive: boolea
 		<div className="h-full flex flex-col bg-gray-900">
 			<div className="flex-1 overflow-y-auto p-4 space-y-4">
 				{messages.map((msg, i) => (
-					<div key={i} className={`${msg.type === "user" ? "text-blue-400" : msg.type === "system" ? "text-gray-400" : "text-white"}`}>
+					<div
+						key={i}
+						className={`${msg.type === "user" ? "text-blue-400" : msg.type === "system" ? "text-gray-400" : "text-white"}`}
+					>
 						{msg.content}
 					</div>
 				))}

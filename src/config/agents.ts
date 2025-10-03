@@ -1,4 +1,4 @@
-import type {AgentConfig} from "@tokenring-ai/agent/Agent";
+import type { AgentConfig } from "@tokenring-ai/agent/Agent";
 
 export const interactiveCodeAgent: AgentConfig = {
 	name: "Interactive Code Agent",
@@ -15,9 +15,7 @@ export const interactiveCodeAgent: AgentConfig = {
 			"When the user tells you to do something, use the available tools to implement changes. " +
 			"Give short and concise responses summarizing the code changes.",
 	},
-	initialCommands: [
-		"/tools enable @tokenring-ai/filesystem/*"
-	]
+	initialCommands: ["/tools enable @tokenring-ai/filesystem/*"],
 };
 
 export default {

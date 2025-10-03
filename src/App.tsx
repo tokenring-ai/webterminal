@@ -1,10 +1,10 @@
-import React, {useCallback, useState} from "react";
-import {v4 as uuidv4} from "uuid";
+import React, { useCallback, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import MainPanel from "./components/MainPanel.tsx";
 import Sidebar from "./components/Sidebar.tsx";
 import Terminal from "./components/Terminal.tsx";
 import TopBar from "./components/TopBar.tsx";
-import {ThemeProvider} from "./context/ThemeProvider.tsx";
+import { ThemeProvider } from "./context/ThemeProvider.tsx";
 
 type Tab = {
 	id: string;

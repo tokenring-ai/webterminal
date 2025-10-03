@@ -1,16 +1,16 @@
-import {FileSystemService} from "@tokenring-ai/filesystem";
+import { FileSystemService } from "@tokenring-ai/filesystem";
 import {
-  ChevronDown,
-  ChevronRight,
-  Download,
-  Edit2,
-  FileText,
-  Folder as FolderIcon,
-  FolderOpen,
-  Trash2,
+	ChevronDown,
+	ChevronRight,
+	Download,
+	Edit2,
+	FileText,
+	Folder as FolderIcon,
+	FolderOpen,
+	Trash2,
 } from "lucide-react";
-import React, {useCallback, useEffect, useRef, useState} from "react";
-import {useAgentTeam} from "../context/AgentTeamProvider.js";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useAgentTeam } from "../context/AgentTeamProvider.js";
 
 type TreeNode = {
 	__children__: Record<string, TreeNode>;
@@ -46,7 +46,13 @@ type TreeNodeProps = {
 	setError: (error: string | null) => void;
 };
 
-function TreeNodeComponent({ node, depth, onFileOpen, refreshTree, setError }: TreeNodeProps) {
+function TreeNodeComponent({
+	node,
+	depth,
+	onFileOpen,
+	refreshTree,
+	setError,
+}: TreeNodeProps) {
 	const team = useAgentTeam();
 	const [open, setOpen] = useState(depth <= 0);
 	const isFile = node.__isFile__;
@@ -65,7 +71,9 @@ function TreeNodeComponent({ node, depth, onFileOpen, refreshTree, setError }: T
 			if (!team) return;
 			const fsService = team.services.requireItemByType(FileSystemService);
 			const content = await fsService.getFile(fullPath);
-			const blob = new Blob([content || ""], { type: "application/octet-stream" });
+			const blob = new Blob([content || ""], {
+				type: "application/octet-stream",
+			});
 			const url = URL.createObjectURL(blob);
 			const a = document.createElement("a");
 			a.href = url;
@@ -211,9 +219,15 @@ function TreeNodeComponent({ node, depth, onFileOpen, refreshTree, setError }: T
 /**
  * @param {{onFileOpen: (filePath:string)=>void}} props
  */
-export default function FileTree({ onFileOpen }: { onFileOpen: (filePath: string) => void }) {
+export default function FileTree({
+	onFileOpen,
+}: {
+	onFileOpen: (filePath: string) => void;
+}) {
 	const team = useAgentTeam();
-	const [treeData, setTreeData] = useState<Record<string, TreeNode> | null>(null);
+	const [treeData, setTreeData] = useState<Record<string, TreeNode> | null>(
+		null,
+	);
 	const [error, setError] = useState<string | null>(null);
 	const [uploading, setUploading] = useState(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
@@ -286,22 +300,36 @@ export default function FileTree({ onFileOpen }: { onFileOpen: (filePath: string
 		);
 	}
 
-	const rootNodes = treeData ? Object.keys(treeData).map((k) => ({
-		...treeData[k],
-		__name__: k,
-	})) : [];
+	const rootNodes = treeData
+		? Object.keys(treeData).map((k) => ({
+				...treeData[k],
+				__name__: k,
+			}))
+		: [];
 
 	return (
 		<>
 			<div className="flex items-center justify-between mb-4">
-				<h2 className="text-gray-400 text-sm font-semibold px-2">FILE EXPLORER</h2>
+				<h2 className="text-gray-400 text-sm font-semibold px-2">
+					FILE EXPLORER
+				</h2>
 				<div className="flex space-x-2">
 					<button
 						onClick={() => refreshTree()}
 						className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
 					>
-						<svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+						<svg
+							className="w-5 h-5 text-gray-400"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+						>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth="2"
+								d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+							/>
 						</svg>
 					</button>
 					<button
@@ -309,7 +337,8 @@ export default function FileTree({ onFileOpen }: { onFileOpen: (filePath: string
 							const fileName = prompt("Enter new file name:");
 							if (!fileName || !team) return;
 							try {
-								const fsService = team.services.getItemByType(FileSystemService);
+								const fsService =
+									team.services.getItemByType(FileSystemService);
 								if (!fsService) throw new Error("FileSystem service not found");
 								await fsService.writeFile(fileName, "");
 								await refreshTree();
@@ -319,8 +348,18 @@ export default function FileTree({ onFileOpen }: { onFileOpen: (filePath: string
 						}}
 						className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
 					>
-						<svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+						<svg
+							className="w-5 h-5 text-gray-400"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+						>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth="2"
+								d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+							/>
 						</svg>
 					</button>
 					<input

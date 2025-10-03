@@ -1,9 +1,15 @@
-import {Moon, PlusCircle, Sun} from "lucide-react";
+import { Moon, PlusCircle, Sun } from "lucide-react";
 import React from "react";
-import {useTheme} from "../context/ThemeProvider.tsx";
+import { useTheme } from "../context/ThemeProvider.tsx";
 import useConfigurationStore from "../hooks/useConfigurationStore.ts";
 
-const SettingsSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
+const SettingsSection = ({
+	title,
+	children,
+}: {
+	title: string;
+	children: React.ReactNode;
+}) => (
 	<section className="mb-6">
 		<h4 className="text-gray-400 text-sm font-semibold mb-4 px-2">
 			{title.toUpperCase()}
@@ -38,7 +44,10 @@ const ActionButton = ({
 		sm: "text-xs",
 		md: "text-sm",
 	};
-	const variantStyles: Record<"primary" | "secondary" | "danger" | "success", string> = {
+	const variantStyles: Record<
+		"primary" | "secondary" | "danger" | "success",
+		string
+	> = {
 		primary: "bg-blue-600 hover:bg-blue-700 text-white focus:ring-blue-500",
 		secondary:
 			"bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-gray-200 focus:ring-gray-400",
@@ -66,13 +75,16 @@ export default function SettingsPanel() {
 	const { config, setConfigurationValue, getConfigurationValue } =
 		useConfigurationStore();
 
-	const handleDefaultChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-		setConfigurationValue(`defaults.${field}`, e.target.value);
-	};
+	const handleDefaultChange =
+		(field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+			setConfigurationValue(`defaults.${field}`, e.target.value);
+		};
 
-	const updateModelField = (modelKey: string, field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-		setConfigurationValue(`models.${modelKey}.${field}`, e.target.value);
-	};
+	const updateModelField =
+		(modelKey: string, field: string) =>
+		(e: React.ChangeEvent<HTMLInputElement>) => {
+			setConfigurationValue(`models.${modelKey}.${field}`, e.target.value);
+		};
 
 	const handleAddModelConfiguration = () => {
 		const newModelKey = window.prompt(
@@ -99,7 +111,8 @@ export default function SettingsPanel() {
 			)
 		) {
 			const currentModels = getConfigurationValue("models") || {};
-			const { [modelKeyToRemove]: _removed, ...remainingModels } = currentModels;
+			const { [modelKeyToRemove]: _removed, ...remainingModels } =
+				currentModels;
 			setConfigurationValue("models", remainingModels);
 		}
 	};

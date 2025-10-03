@@ -1,9 +1,7 @@
 import type Agent from "@tokenring-ai/agent/Agent";
-import {useCallback, useEffect, useReducer, useState} from "react";
+import { useCallback, useEffect, useReducer, useState } from "react";
 
-const initialMessages = [
-	{ kind: "system", text: "Welcome to WebTerminal!" },
-];
+const initialMessages = [{ kind: "system", text: "Welcome to WebTerminal!" }];
 
 export function useRepl(agent: Agent | null) {
 	const [commandHistory, setCommandHistory] = useState<string[]>([]);
@@ -28,7 +26,7 @@ export function useRepl(agent: Agent | null) {
 		if (!agent) return;
 
 		const abortController = new AbortController();
-		
+
 		(async () => {
 			for await (const event of agent.events(abortController.signal)) {
 				switch (event.type) {
@@ -39,7 +37,10 @@ export function useRepl(agent: Agent | null) {
 						addChunk({ kind: "system", text: event.data.content });
 						break;
 					case "output.system":
-						addChunk({ kind: event.data.level || "system", text: event.data.message });
+						addChunk({
+							kind: event.data.level || "system",
+							text: event.data.message,
+						});
 						break;
 					case "input.received":
 						addChunk({ kind: "user", text: `> ${event.data.message}` });

@@ -1,9 +1,9 @@
-import {Editor} from "@monaco-editor/react";
-import {FileSystemService} from "@tokenring-ai/filesystem";
-import {AlertTriangle, Edit2, Save, Trash2} from "lucide-react";
-import React, {useEffect, useState} from "react";
-import {useAgentTeam} from "../context/AgentTeamProvider.tsx";
-import {useTheme} from "../context/ThemeProvider.tsx";
+import { Editor } from "@monaco-editor/react";
+import { FileSystemService } from "@tokenring-ai/filesystem";
+import { AlertTriangle, Edit2, Save, Trash2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { useAgentTeam } from "../context/AgentTeamProvider.tsx";
+import { useTheme } from "../context/ThemeProvider.tsx";
 
 const ActionButton = ({
 	onClick,
@@ -33,7 +33,15 @@ const ActionButton = ({
 	</button>
 );
 
-export default function FileViewer({ filePath, onFileDeleted, onFileRenamed }: { filePath: string; onFileDeleted?: () => void; onFileRenamed?: (newPath: string) => void }) {
+export default function FileViewer({
+	filePath,
+	onFileDeleted,
+	onFileRenamed,
+}: {
+	filePath: string;
+	onFileDeleted?: () => void;
+	onFileRenamed?: (newPath: string) => void;
+}) {
 	const team = useAgentTeam();
 	const { theme } = useTheme();
 
