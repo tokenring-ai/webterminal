@@ -1,29 +1,30 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import {FileSystemService} from "@tokenring-ai/filesystem";
 import {
-	ChevronRight,
-	ChevronDown,
-	FileText,
-	Folder as FolderIcon,
-	FolderOpen,
-	Upload,
-	Download,
-	Trash2,
-	Edit2,
+  ChevronDown,
+  ChevronRight,
+  Download,
+  Edit2,
+  FileText,
+  Folder as FolderIcon,
+  FolderOpen,
+  Trash2,
 } from "lucide-react";
-import clsx from "clsx";
-import { useRegistry } from "../context/RegistryProvider";
-import { FileSystemService } from "@token-ring/filesystem";
+import React, {useCallback, useEffect, useRef, useState} from "react";
+import {useAgentTeam} from "../context/AgentTeamProvider.js";
 
-/**
- * Recursively builds a nested tree structure from an array of file paths.
- * @param {string[]} paths
- */
-function buildTree(paths) {
-	const root = {};
+type TreeNode = {
+	__children__: Record<string, TreeNode>;
+	__full__: string;
+	__isFile__: boolean;
+	__name__?: string;
+};
+
+function buildTree(paths: string[]): Record<string, TreeNode> {
+	const root: Record<string, TreeNode> = {};
 	for (const p of paths) {
 		const parts = p.split("/");
-		let current = root;
-		parts.forEach((part, idx) => {
+		let current: Record<string, TreeNode> = root;
+		parts.forEach((part: string, idx: number) => {
 			if (!current[part]) {
 				current[part] = {
 					__children__: {},
@@ -37,8 +38,16 @@ function buildTree(paths) {
 	return root;
 }
 
-function TreeNode({ node, depth, onFileOpen, refreshTree, setError }) {
-	const registry = useRegistry();
+type TreeNodeProps = {
+	node: TreeNode;
+	depth: number;
+	onFileOpen: (filePath: string) => void;
+	refreshTree: () => Promise<void>;
+	setError: (error: string | null) => void;
+};
+
+function TreeNodeComponent({ node, depth, onFileOpen, refreshTree, setError }: TreeNodeProps) {
+	const team = useAgentTeam();
 	const [open, setOpen] = useState(depth <= 0);
 	const isFile = node.__isFile__;
 	const name = node.__name__;
@@ -50,61 +59,63 @@ function TreeNode({ node, depth, onFileOpen, refreshTree, setError }) {
 	}));
 
 	// Handle download
-	const handleDownload = async (e) => {
+	const handleDownload = async (e: React.MouseEvent) => {
 		e.stopPropagation();
 		try {
-			const fsService = registry.getFirstServiceByType(FileSystemService);
+			if (!team) return;
+			const fsService = team.services.requireItemByType(FileSystemService);
 			const content = await fsService.getFile(fullPath);
-			const blob = new Blob([content], { type: "application/octet-stream" });
+			const blob = new Blob([content || ""], { type: "application/octet-stream" });
 			const url = URL.createObjectURL(blob);
 			const a = document.createElement("a");
 			a.href = url;
-			a.download = name;
+			a.download = name || "download";
 			document.body.appendChild(a);
 			a.click();
 			document.body.removeChild(a);
 			URL.revokeObjectURL(url);
 		} catch (err) {
-			setError && setError(err.message);
+			setError && setError((err as Error).message);
 		}
 	};
 
 	// Handle delete
-	const handleDelete = async (e) => {
+	const handleDelete = async (e: React.MouseEvent) => {
 		e.stopPropagation();
 		if (!window.confirm(`Are you sure you want to delete '${fullPath}'?`))
 			return;
 		try {
-			const fsService = registry.getFirstServiceByType(FileSystemService);
+			if (!team) return;
+			const fsService = team.services.requireItemByType(FileSystemService);
 			await fsService.deleteFile(fullPath);
 			await refreshTree();
 		} catch (err) {
-			setError && setError(err.message);
+			setError && setError((err as Error).message);
 		}
 	};
 
 	// Handle rename
-	const handleRename = async (e) => {
+	const handleRename = async (e: React.MouseEvent) => {
 		e.stopPropagation();
 		const newName = window.prompt("Enter new name:", name);
 		if (!newName || newName === name) return;
 		const newPath = fullPath.split("/").slice(0, -1).concat(newName).join("/");
 		try {
-			const fsService = registry.getFirstServiceByType(FileSystemService);
-			await fsService.renameFile(fullPath, newPath);
+			if (!team) return;
+			const fsService = team.services.requireItemByType(FileSystemService);
+			const content = await fsService.getFile(fullPath);
+			await fsService.writeFile(newPath, content || "");
+			await fsService.deleteFile(fullPath);
 			await refreshTree();
 		} catch (err) {
-			setError && setError(err.message);
+			setError && setError((err as Error).message);
 		}
 	};
 
 	return (
 		<div className="text-sm">
 			<div
-				className={clsx(
-					"flex items-center space-x-2 py-1 px-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer select-none",
-					{ "font-semibold": !isFile && open },
-				)}
+				className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-800 cursor-pointer group"
 				onClick={() => {
 					if (isFile) {
 						onFileOpen(fullPath);
@@ -182,7 +193,7 @@ function TreeNode({ node, depth, onFileOpen, refreshTree, setError }) {
 			{!isFile && open && (
 				<div className="pl-4 border-l border-gray-200 dark:border-gray-700">
 					{children.map((child) => (
-						<TreeNode
+						<TreeNodeComponent
 							key={child.__full__}
 							node={child}
 							depth={depth + 1}
@@ -200,31 +211,32 @@ function TreeNode({ node, depth, onFileOpen, refreshTree, setError }) {
 /**
  * @param {{onFileOpen: (filePath:string)=>void}} props
  */
-export default function FileTree({ onFileOpen }) {
-	const registry = useRegistry();
-	const [treeData, setTreeData] = useState(null);
-	const [error, setError] = useState(null);
+export default function FileTree({ onFileOpen }: { onFileOpen: (filePath: string) => void }) {
+	const team = useAgentTeam();
+	const [treeData, setTreeData] = useState<Record<string, TreeNode> | null>(null);
+	const [error, setError] = useState<string | null>(null);
 	const [uploading, setUploading] = useState(false);
-	const fileInputRef = useRef(null);
+	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	const refreshTree = useCallback(async () => {
 		try {
 			setError(null);
-			const fsService = registry.getFirstServiceByType(FileSystemService);
+			if (!team) return;
+			const fsService = team.services.getItemByType(FileSystemService);
 			if (!fsService) throw new Error("FileSystem service not found");
-			const ig = await fsService.createIgnoreFilter();
-			const paths = [];
+			const ignoreFilter = await fsService.createIgnoreFilter();
+			const paths: string[] = [];
 			for await (const p of fsService.getDirectoryTree("", {
-				ig,
+				ignoreFilter,
 				recursive: true,
 			})) {
 				paths.push(p);
 			}
 			setTreeData(buildTree(paths));
 		} catch (e) {
-			setError(e.message);
+			setError((e as Error).message);
 		}
-	}, [registry]);
+	}, [team]);
 
 	useEffect(() => {
 		refreshTree();
@@ -234,25 +246,26 @@ export default function FileTree({ onFileOpen }) {
 		fileInputRef.current?.click();
 	};
 
-	const handleFileChange = async (e) => {
+	const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const files = e.target.files;
 		if (!files || files.length === 0) return;
 		setUploading(true);
 		setError(null);
 		try {
-			const fsService = registry.getFirstServiceByType(FileSystemService);
+			if (!team) return;
+			const fsService = team.services.getItemByType(FileSystemService);
 			if (!fsService) throw new Error("FileSystem service not found");
 			for (const file of files) {
-				const content = await file.arrayBuffer();
-				await fsService.writeFile(file.name, new Uint8Array(content));
+				const content = await file.text();
+				await fsService.writeFile(file.name, content);
 			}
 			await refreshTree();
 		} catch (err) {
-			setError(err.message);
+			setError((err as Error).message);
 		} finally {
 			setUploading(false);
 			if (fileInputRef.current) {
-				fileInputRef.current.value = null;
+				fileInputRef.current.value = "";
 			}
 		}
 	};
@@ -273,73 +286,42 @@ export default function FileTree({ onFileOpen }) {
 		);
 	}
 
-	const rootNodes = Object.keys(treeData).map((k) => ({
+	const rootNodes = treeData ? Object.keys(treeData).map((k) => ({
 		...treeData[k],
 		__name__: k,
-	}));
+	})) : [];
 
 	return (
-		<div className="flex flex-col h-full bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
-			<div className="flex items-center justify-between p-3 border-b border-gray-200 dark:border-gray-700 gap-2">
-				<span className="text-md font-semibold">File Explorer</span>
-				<div className="flex gap-2">
+		<>
+			<div className="flex items-center justify-between mb-4">
+				<h2 className="text-gray-400 text-sm font-semibold px-2">FILE EXPLORER</h2>
+				<div className="flex space-x-2">
+					<button
+						onClick={() => refreshTree()}
+						className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
+					>
+						<svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+						</svg>
+					</button>
 					<button
 						onClick={async () => {
-							const fileName = prompt(
-								"Enter new file name (with path if needed):",
-							);
-							if (!fileName) return;
+							const fileName = prompt("Enter new file name:");
+							if (!fileName || !team) return;
 							try {
-								const fsService =
-									registry.getFirstServiceByType(FileSystemService);
+								const fsService = team.services.getItemByType(FileSystemService);
+								if (!fsService) throw new Error("FileSystem service not found");
 								await fsService.writeFile(fileName, "");
 								await refreshTree();
 							} catch (err) {
-								setError(err.message);
+								setError((err as Error).message);
 							}
 						}}
-						className="flex items-center gap-1 text-xs px-2 py-1 rounded bg-green-500 hover:bg-green-600 text-white"
+						className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
 					>
-						+ File
-					</button>
-					<button
-						onClick={async () => {
-							const folderName = prompt(
-								"Enter new folder name (with path if needed):",
-							);
-							if (!folderName) return;
-							try {
-								const fsService =
-									registry.getFirstServiceByType(FileSystemService);
-								await fsService.mkdir(folderName); // Assumes mkdir is available
-								await refreshTree();
-							} catch (err) {
-								setError(err.message);
-							}
-						}}
-						className="flex items-center gap-1 text-xs px-2 py-1 rounded bg-yellow-500 hover:bg-yellow-600 text-white"
-					>
-						+ Folder
-					</button>
-					<button
-						onClick={handleUploadClick}
-						disabled={uploading}
-						className={clsx(
-							"flex items-center gap-2 text-sm px-3 py-1.5 rounded-md transition-colors",
-							"bg-blue-500 hover:bg-blue-600 text-white dark:bg-blue-600 dark:hover:bg-blue-700",
-							{ "opacity-50 cursor-not-allowed": uploading },
-						)}
-					>
-						{uploading ? (
-							<>
-								<div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></div>
-								Uploading...
-							</>
-						) : (
-							<>
-								<Upload size={16} /> Upload Files
-							</>
-						)}
+						<svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+						</svg>
 					</button>
 					<input
 						type="file"
@@ -350,9 +332,9 @@ export default function FileTree({ onFileOpen }) {
 					/>
 				</div>
 			</div>
-			<div className="p-2 overflow-auto flex-1 space-y-0.5">
+			<div className="space-y-1">
 				{rootNodes.map((n) => (
-					<TreeNode
+					<TreeNodeComponent
 						key={n.__full__}
 						node={n}
 						depth={0}
@@ -362,6 +344,6 @@ export default function FileTree({ onFileOpen }) {
 					/>
 				))}
 			</div>
-		</div>
+		</>
 	);
 }

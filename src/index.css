@@ -5,3 +5,31 @@ body,
 #root {
 	height: 100%;
 }
+
+::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+::-webkit-scrollbar-track {
+	background: #1a1b26;
+}
+
+::-webkit-scrollbar-thumb {
+	background: #2a2b3a;
+	border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: #3a3b4a;
+}
+
+@keyframes blink {
+	0% { opacity: 1; }
+	50% { opacity: 0; }
+	100% { opacity: 1; }
+}
+
+.animate-blink {
+	animation: blink 1s infinite;
+}

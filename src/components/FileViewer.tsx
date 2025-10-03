@@ -1,15 +1,22 @@
-import React, { useEffect, useState } from "react";
-import Editor from "@monaco-editor/react";
-import { Save, AlertTriangle, Info, Trash2, Edit2 } from "lucide-react";
-import { useRegistry } from "../context/RegistryProvider";
-import { useTheme } from "../context/ThemeProvider";
+import {Editor} from "@monaco-editor/react";
+import {FileSystemService} from "@tokenring-ai/filesystem";
+import {AlertTriangle, Edit2, Save, Trash2} from "lucide-react";
+import React, {useEffect, useState} from "react";
+import {useAgentTeam} from "../context/AgentTeamProvider.tsx";
+import {useTheme} from "../context/ThemeProvider.tsx";
 
 const ActionButton = ({
 	onClick,
 	children,
-	disabled,
+	disabled = false,
 	className = "",
 	icon: Icon,
+}: {
+	onClick: () => void;
+	children: React.ReactNode;
+	disabled?: boolean;
+	className?: string;
+	icon: React.ComponentType<{ size: number }>;
 }) => (
 	<button
 		onClick={onClick}
@@ -26,44 +33,39 @@ const ActionButton = ({
 	</button>
 );
 
-/**
- * @param {{filePath: string, onFileDeleted?: () => void, onFileRenamed?: (newPath: string) => void}} props
- * @returns {JSX.Element}
- */
-export default function FileViewer({ filePath, onFileDeleted, onFileRenamed }) {
-	const registry = useRegistry();
+export default function FileViewer({ filePath, onFileDeleted, onFileRenamed }: { filePath: string; onFileDeleted?: () => void; onFileRenamed?: (newPath: string) => void }) {
+	const team = useAgentTeam();
 	const { theme } = useTheme();
 
-	const [content, setContent] = useState(null);
-	const [error, setError] = useState(null);
+	const [content, setContent] = useState<string | null>(null);
+	const [error, setError] = useState<string | null>(null);
 	const [dirty, setDirty] = useState(false);
 
 	useEffect(() => {
 		async function load() {
 			try {
 				setError(null);
-				if (!registry) throw new Error("Registry not found");
-				const FileSystem = globalThis.FileSystemService;
-				const fsService = registry.getFirstServiceByType(FileSystem);
+				if (!team) throw new Error("Team not found");
+				const fsService = team.services.getItemByType(FileSystemService);
 				if (!fsService) throw new Error("FileSystem service not found");
 				const data = await fsService.getFile(filePath);
 				setContent(data);
 				setDirty(false);
 			} catch (e) {
-				setError(e.message);
+				setError((e as Error).message);
 			}
 		}
 		load();
-	}, [filePath, registry]);
+	}, [filePath, team]);
 
 	const handleSave = async () => {
 		try {
-			const FileSystem = globalThis.FileSystemService;
-			const fsService = registry.getFirstServiceByType(FileSystem);
-			await fsService.writeFile(filePath, content);
+			if (!team) return;
+			const fsService = team.services.requireItemByType(FileSystemService);
+			await fsService.writeFile(filePath, content || "");
 			setDirty(false);
 		} catch (e) {
-			setError(e.message);
+			setError((e as Error).message);
 		}
 	};
 
@@ -71,12 +73,12 @@ export default function FileViewer({ filePath, onFileDeleted, onFileRenamed }) {
 		if (!window.confirm(`Are you sure you want to delete '${filePath}'?`))
 			return;
 		try {
-			const FileSystem = globalThis.FileSystemService;
-			const fsService = registry.getFirstServiceByType(FileSystem);
+			if (!team) return;
+			const fsService = team.services.requireItemByType(FileSystemService);
 			await fsService.deleteFile(filePath);
 			if (onFileDeleted) onFileDeleted();
 		} catch (e) {
-			setError(e.message);
+			setError((e as Error).message);
 		}
 	};
 
@@ -86,16 +88,19 @@ export default function FileViewer({ filePath, onFileDeleted, onFileRenamed }) {
 		if (!newName || newName === name) return;
 		const newPath = filePath.split("/").slice(0, -1).concat(newName).join("/");
 		try {
-			const FileSystem = globalThis.FileSystemService;
-			const fsService = registry.getFirstServiceByType(FileSystem);
-			await fsService.renameFile(filePath, newPath);
+			if (!team) return;
+			const fsService = team.services.getItemByType(FileSystemService);
+			if (!fsService) throw new Error("FileSystem service not found");
+			const fileContent = await fsService.getFile(filePath);
+			await fsService.writeFile(newPath, fileContent || "");
+			await fsService.deleteFile(filePath);
 			if (onFileRenamed) onFileRenamed(newPath);
 		} catch (e) {
-			setError(e.message);
+			setError((e as Error).message);
 		}
 	};
 
-	const getLanguageFromPath = (path) => {
+	const getLanguageFromPath = (path: string) => {
 		const extension = path.split(".").pop()?.toLowerCase();
 		switch (extension) {
 			case "js":
@@ -190,8 +195,8 @@ export default function FileViewer({ filePath, onFileDeleted, onFileRenamed }) {
 					height="100%"
 					language={language}
 					value={content || ""}
-					onChange={(value) => {
-						setContent(value);
+					onChange={(value: string | undefined) => {
+						setContent(value || "");
 						setDirty(true);
 					}}
 					theme={theme === "dark" ? "vs-dark" : "vs"}

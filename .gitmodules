@@ -3,8 +3,8 @@
 	url = git@github.com:tokenring-ai/ai-client
 	branch = origin/main
 [submodule "pkg/chat"]
-	path = pkg/chat
-	url = git@github.com:tokenring-ai/chat
+	path = pkg/agent
+	url = git@github.com:tokenring-ai/agent.git
 	branch = origin/main
 [submodule "pkg/codebase"]
 	path = pkg/codebase

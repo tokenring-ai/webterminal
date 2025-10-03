@@ -6,19 +6,22 @@
  */
 
 export default class WebOutputFormatter {
+	addLine: (line: {kind: string, text: string}) => void;
+	currentOutputType: string | null;
+
 	/**
 	 * @param {(line:{kind:LineKind,text:string})=>void} addLine
 	 */
-	constructor(addLine) {
+	constructor(addLine: (line: {kind: string, text: string}) => void) {
 		this.addLine = addLine;
 		this.currentOutputType = null;
 	}
 
-	outputType(type) {
+	outputType(type: string) {
 		this.currentOutputType = type;
 	}
 
-	waiting(msg) {
+	waiting(msg: string) {
 		this.addLine({ kind: "system", text: `⏳ ${msg}` });
 	}
 
@@ -26,15 +29,15 @@ export default class WebOutputFormatter {
 		// no spinner needed – the UI could implement one if desired
 	}
 
-	systemLine(...msgs) {
+	systemLine(...msgs: string[]) {
 		this.addLine({ kind: "system", text: msgs.join(" ") });
 	}
 
-	errorLine(...msgs) {
+	errorLine(...msgs: string[]) {
 		this.addLine({ kind: "error", text: msgs.join(" ") });
 	}
 
-	warningLine(...msgs) {
+	warningLine(...msgs: string[]) {
 		this.addLine({ kind: "warning", text: msgs.join(" ") });
 	}
 
@@ -42,7 +45,7 @@ export default class WebOutputFormatter {
 		this.addLine({ kind: "system", text: "─".repeat(40) });
 	}
 
-	stdout(msg) {
+	stdout(msg: string) {
 		this.addLine({ kind: "stdout", text: msg });
 	}
 }

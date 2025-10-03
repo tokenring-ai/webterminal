@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import {useCallback, useEffect, useState} from "react";
 
 /**
  * useSession hook for Auth.js/NextAuth.js compatible API
@@ -19,10 +19,10 @@ export function useSession() {
 			});
 			if (!res.ok) throw new Error("Failed to fetch session");
 			const data = await res.json();
-			setSession(data?.user ? data : null);
+			setSession((data?.user ? data : null) as any);
 		} catch (e) {
 			setSession(null);
-			setError(e);
+			setError(e as any);
 		} finally {
 			setLoading(false);
 		}
