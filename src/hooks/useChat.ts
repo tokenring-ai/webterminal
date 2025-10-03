@@ -1,20 +1,19 @@
+import { AgentStateStorage } from "@tokenring-ai/agent";
 import AgentTeam from "@tokenring-ai/agent/AgentTeam";
 import * as AIClientPackage from "@tokenring-ai/ai-client";
 import { ModelRegistry } from "@tokenring-ai/ai-client";
 import { registerModels } from "@tokenring-ai/ai-client/models";
 import * as models from "@tokenring-ai/ai-client/models"; // For default models
 import {
-	BrowserChatHistoryService,
-	BrowserCheckpointService,
-	packageInfo as BrowserChatStoragePackage,
-} from "pkg/browser-agent-storage";
+	BrowserAgentStateStorage,
+	packageInfo as BrowserAgentStoragePackage,
+} from "@tokenring-ai/browser-agent-storage";
 import {
 	BrowserFileSystem,
 	packageInfo as BrowserFileSystemPackage,
 } from "@tokenring-ai/browser-file-system";
 import ConfigurationManagementService from "@tokenring-ai/config/services/ConfigurationManagementService.js";
 import * as FilesystemPackage from "@tokenring-ai/filesystem";
-import * as HistoryPackage from "@tokenring-ai/history";
 import * as MemoryPackage from "@tokenring-ai/memory";
 import { ShortTermMemoryService } from "@tokenring-ai/memory";
 import * as QueuePackage from "@tokenring-ai/queue";
@@ -72,22 +71,22 @@ export const useChat = (
 					AIClientPackage.packageInfo,
 					MemoryPackage.packageInfo,
 					QueuePackage.packageInfo,
-					HistoryPackage.packageInfo,
 					BrowserFileSystemPackage,
-					BrowserChatStoragePackage,
+					BrowserAgentStoragePackage,
 					FilesystemPackage.packageInfo,
 				]);
 
 				const modelRegistry = new ModelRegistry();
 				await registerModels(actualConfig.models, modelRegistry);
 
-				agentTeam.services.register([configServiceInstance]);
-				agentTeam.services.register([modelRegistry]);
-				agentTeam.services.register([new BrowserFileSystem()]);
-				agentTeam.services.register([new ShortTermMemoryService()]);
-				agentTeam.services.register([new WorkQueueService()]);
-				agentTeam.services.register([new BrowserCheckpointService("")]);
-				agentTeam.services.register([new BrowserChatHistoryService("")]);
+				agentTeam.services.register([
+					configServiceInstance,
+					modelRegistry,
+					new AgentStateStorage(new BrowserAgentStateStorage("webterminal")),
+					new BrowserFileSystem(),
+					new ShortTermMemoryService(),
+					new WorkQueueService(),
+				]);
 
 				setAgentTeam(agentTeam);
 				setError(null); // Clear any previous error
