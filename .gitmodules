@@ -60,7 +60,7 @@
 	branch = origin/main
 [submodule "pkg/browser-chat-storage"]
 	path = pkg/browser-chat-storage
-	url = git@github.com:tokenring-ai/browser-chat-storage.git
+	url = git@github.com:tokenring-ai/browser-agent-storage.git
 	branch = origin/main
 [submodule "pkg/browser-file-system"]
 	path = pkg/browser-file-system
