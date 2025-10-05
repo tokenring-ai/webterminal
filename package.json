@@ -9,9 +9,11 @@
 		"@tokenring-ai/ai-client": "0.1.0",
 		"@tokenring-ai/browser-agent-storage": "0.1.0",
 		"@tokenring-ai/browser-file-system": "0.1.0",
+		"@tokenring-ai/checkpoint": "0.1.0",
 		"@tokenring-ai/codebase": "0.1.0",
 		"@tokenring-ai/config": "0.1.0",
 		"@tokenring-ai/filesystem": "0.1.0",
+		"@tokenring-ai/iterables": "0.1.0",
 		"@tokenring-ai/memory": "0.1.0",
 		"@tokenring-ai/queue": "0.1.0",
 		"@tokenring-ai/testing": "0.1.0",
@@ -34,7 +36,8 @@
 		"postcss": "^8.5.6",
 		"tailwindcss": "^4.1.14",
 		"trufflehog": "^0.0.5",
-		"vite": "^7.1.9"
+		"vite": "^7.1.9",
+		"vite-plugin-node-polyfills": "^0.24.0"
 	},
 	"private": true,
 	"scripts": {

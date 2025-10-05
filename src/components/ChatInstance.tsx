@@ -1,10 +1,16 @@
-import type Agent from "@tokenring-ai/agent/Agent";
+import { HumanInterfaceRequest } from "@tokenring-ai/agent/HumanInterfaceRequest";
 import React, { useEffect, useState } from "react";
 import { useAgentTeam } from "../context/AgentTeamProvider.tsx";
+import HumanRequestDialog from "./HumanRequestDialog.tsx";
 
 type Message = {
 	type: "user" | "assistant" | "system";
 	content: string;
+};
+
+type PendingRequest = {
+	request: HumanInterfaceRequest;
+	sequence: number;
 };
 
 const ChatInstance = ({
@@ -15,28 +21,12 @@ const ChatInstance = ({
 	isActive: boolean;
 }) => {
 	const team = useAgentTeam();
-	const [agent, setAgent] = useState<Agent | null>(null);
+	const agent = team?.getAgent(agentId) || null;
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [input, setInput] = useState("");
-
-	useEffect(() => {
-		if (!team || !agentId) return;
-
-		let currentAgent: Agent | null = null;
-
-		const initAgent = async () => {
-			currentAgent = await team.createAgent("interactiveCodeAgent");
-			setAgent(currentAgent);
-		};
-
-		initAgent();
-
-		return () => {
-			if (currentAgent) {
-				team.deleteAgent(currentAgent);
-			}
-		};
-	}, [team, agentId]);
+	const [pendingRequest, setPendingRequest] = useState<PendingRequest | null>(
+		null,
+	);
 
 	useEffect(() => {
 		if (!agent || !isActive) return;
@@ -64,6 +54,12 @@ const ChatInstance = ({
 							{ type: "user", content: event.data.message },
 						]);
 						break;
+					case "human.request":
+						setPendingRequest({
+							request: event.data.request,
+							sequence: event.data.sequence,
+						});
+						break;
 				}
 			}
 		})();
@@ -78,26 +74,43 @@ const ChatInstance = ({
 		setInput("");
 	};
 
+	const handleHumanResponse = (sequence: number, response: any) => {
+		if (agent) {
+			agent.sendHumanResponse(sequence, response);
+		}
+		setPendingRequest(null);
+	};
+
 	if (!isActive) return null;
 
 	return (
-		<div className="h-full flex flex-col bg-gray-900">
+		<div className="h-full flex flex-col bg-white dark:bg-gray-900">
+			{pendingRequest && (
+				<HumanRequestDialog
+					request={pendingRequest.request}
+					sequence={pendingRequest.sequence}
+					onResponse={handleHumanResponse}
+				/>
+			)}
 			<div className="flex-1 overflow-y-auto p-4 space-y-4">
 				{messages.map((msg, i) => (
 					<div
 						key={i}
-						className={`${msg.type === "user" ? "text-blue-400" : msg.type === "system" ? "text-gray-400" : "text-white"}`}
+						className={`${msg.type === "user" ? "text-blue-600 dark:text-blue-400" : msg.type === "system" ? "text-gray-500 dark:text-gray-400" : "text-gray-900 dark:text-white"}`}
 					>
 						{msg.content}
 					</div>
 				))}
 			</div>
-			<form onSubmit={handleSubmit} className="border-t border-gray-700 p-4">
+			<form
+				onSubmit={handleSubmit}
+				className="border-t border-gray-300 dark:border-gray-700 p-4"
+			>
 				<input
 					type="text"
 					value={input}
 					onChange={(e) => setInput(e.target.value)}
-					className="w-full bg-gray-800 text-white px-4 py-2 rounded-lg outline-none"
+					className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2 rounded-lg outline-none"
 					placeholder="Type a message..."
 				/>
 			</form>

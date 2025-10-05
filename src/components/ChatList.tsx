@@ -38,7 +38,7 @@ export default function ChatList({
 								className="w-full text-left p-3 rounded-lg hover:bg-gray-800 transition-colors group"
 							>
 								<div className="flex items-center space-x-3">
-									<div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
+									<div className="w-8 h-8 rounded-full bg-linear-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
 										<span className="text-white text-xs font-bold">AI</span>
 									</div>
 									<div className="flex-1 min-w-0">

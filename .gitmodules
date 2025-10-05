@@ -70,3 +70,11 @@
 	path = pkg/config
 	url = git@github.com:tokenring-ai/config.git
 	branch = origin/main
+[submodule "pkg/checkpoint"]
+	path = pkg/checkpoint
+	url = git@github.com:tokenring-ai/checkpoint.git
+	branch = main
+[submodule "pkg/iterables"]
+	path = pkg/iterables
+	url = git@github.com:tokenring-ai/iterables.git
+	branch = main

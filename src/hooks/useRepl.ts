@@ -3,29 +3,56 @@ import { useCallback, useEffect, useReducer, useState } from "react";
 
 const initialMessages = [{ kind: "system", text: "Welcome to WebTerminal!" }];
 
+type Chunk = { kind: string; text: string };
+
+const agentChunks = new Map<Agent, Chunk[]>();
+const agentHistories = new Map<Agent, string[]>();
+const agentHistoryIndexes = new Map<Agent, number>();
+const agentListeners = new Map<Agent, AbortController>();
+
 export function useRepl(agent: Agent | null) {
-	const [commandHistory, setCommandHistory] = useState<string[]>([]);
-	const [historyIndex, setHistoryIndex] = useState(-1);
+	const [, forceUpdate] = useState({});
 
-	type Chunk = { kind: string; text: string };
-
-	const [chunks, addChunk] = useReducer((prevState: Chunk[], chunk: Chunk) => {
-		if (chunk.kind === "stdout") {
-			const lastMessage = prevState?.[prevState.length - 1];
-			if (lastMessage && lastMessage.kind === "stdout") {
-				return [
-					...prevState.slice(0, -1),
-					{ kind: "stdout", text: lastMessage.text + chunk.text },
-				];
-			}
-		}
-		return [...prevState, chunk];
-	}, initialMessages);
+	if (agent && !agentChunks.has(agent)) {
+		agentChunks.set(agent, [...initialMessages]);
+		agentHistories.set(agent, []);
+		agentHistoryIndexes.set(agent, -1);
+	}
 
 	useEffect(() => {
-		if (!agent) return;
+		forceUpdate({});
+	}, [agent]);
+
+	const chunks = agent ? agentChunks.get(agent) || [] : [];
+	const commandHistory = agent ? agentHistories.get(agent) || [] : [];
+	const historyIndex = agent ? agentHistoryIndexes.get(agent) || -1 : -1;
+
+	const addChunk = useCallback(
+		(chunk: Chunk) => {
+			if (!agent) return;
+			const currentChunks = agentChunks.get(agent) || [];
+			if (chunk.kind === "stdout") {
+				const lastMessage = currentChunks[currentChunks.length - 1];
+				if (lastMessage && lastMessage.kind === "stdout") {
+					agentChunks.set(agent, [
+						...currentChunks.slice(0, -1),
+						{ kind: "stdout", text: lastMessage.text + chunk.text },
+					]);
+					forceUpdate({});
+					return;
+				}
+			}
+			agentChunks.set(agent, [...currentChunks, chunk]);
+			forceUpdate({});
+		},
+		[agent],
+	);
+
+	useEffect(() => {
+		if (!agent || agentListeners.has(agent)) return;
 
 		const abortController = new AbortController();
+		agentListeners.set(agent, abortController);
 
 		(async () => {
 			for await (const event of agent.events(abortController.signal)) {
@@ -49,8 +76,8 @@ export function useRepl(agent: Agent | null) {
 			}
 		})();
 
-		return () => abortController.abort();
-	}, [agent]);
+		return () => {};
+	}, [agent, addChunk]);
 
 	const handleInput = useCallback(
 		async (line: string) => {
@@ -59,39 +86,46 @@ export function useRepl(agent: Agent | null) {
 			const processedInput = (line ?? "").trim();
 			if (!processedInput) return;
 
+			const currentHistory = agentHistories.get(agent) || [];
 			if (
 				processedInput &&
-				(commandHistory.length === 0 ||
-					commandHistory[commandHistory.length - 1] !== processedInput)
+				(currentHistory.length === 0 ||
+					currentHistory[currentHistory.length - 1] !== processedInput)
 			) {
-				setCommandHistory((prev: string[]) => [...prev, processedInput]);
+				agentHistories.set(agent, [...currentHistory, processedInput]);
 			}
-			setHistoryIndex(-1);
+			agentHistoryIndexes.set(agent, -1);
 
 			agent.handleInput({ message: processedInput });
 		},
-		[agent, commandHistory],
+		[agent],
 	);
 
 	const getPreviousCommand = useCallback(() => {
-		if (commandHistory.length === 0) return "";
+		if (!agent) return "";
+		const currentHistory = agentHistories.get(agent) || [];
+		const currentIndex = agentHistoryIndexes.get(agent) || -1;
+		if (currentHistory.length === 0) return "";
 		const newIndex =
-			historyIndex === -1
-				? commandHistory.length - 1
-				: Math.max(0, historyIndex - 1);
-		setHistoryIndex(newIndex);
-		return commandHistory[newIndex];
-	}, [commandHistory, historyIndex]);
+			currentIndex === -1
+				? currentHistory.length - 1
+				: Math.max(0, currentIndex - 1);
+		agentHistoryIndexes.set(agent, newIndex);
+		return currentHistory[newIndex];
+	}, [agent]);
 
 	const getNextCommand = useCallback(() => {
-		if (historyIndex === -1 || historyIndex >= commandHistory.length - 1) {
-			setHistoryIndex(-1);
+		if (!agent) return "";
+		const currentHistory = agentHistories.get(agent) || [];
+		const currentIndex = agentHistoryIndexes.get(agent) || -1;
+		if (currentIndex === -1 || currentIndex >= currentHistory.length - 1) {
+			agentHistoryIndexes.set(agent, -1);
 			return "";
 		}
-		const newIndex = Math.min(commandHistory.length - 1, historyIndex + 1);
-		setHistoryIndex(newIndex);
-		return commandHistory[newIndex];
-	}, [commandHistory, historyIndex]);
+		const newIndex = Math.min(currentHistory.length - 1, currentIndex + 1);
+		agentHistoryIndexes.set(agent, newIndex);
+		return currentHistory[newIndex];
+	}, [agent]);
 
 	return {
 		chunks,

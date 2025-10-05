@@ -1,6 +1,4 @@
-import { Moon, PlusCircle, Sun } from "lucide-react";
 import React from "react";
-import { useTheme } from "../context/ThemeProvider.tsx";
 import useConfigurationStore from "../hooks/useConfigurationStore.ts";
 
 const SettingsSection = ({
@@ -66,12 +64,6 @@ const ActionButton = ({
 };
 
 export default function SettingsPanel() {
-	const [profile, setProfile] = React.useState({
-		name: "",
-		email: "",
-	});
-
-	const { theme, setTheme } = useTheme();
 	const { config, setConfigurationValue, getConfigurationValue } =
 		useConfigurationStore();
 
@@ -80,142 +72,257 @@ export default function SettingsPanel() {
 			setConfigurationValue(`defaults.${field}`, e.target.value);
 		};
 
-	const updateModelField =
-		(modelKey: string, field: string) =>
-		(e: React.ChangeEvent<HTMLInputElement>) => {
-			setConfigurationValue(`models.${modelKey}.${field}`, e.target.value);
-		};
+	const updateProviderField = (
+		providerName: string,
+		field: string,
+		value: string,
+	) => {
+		setConfigurationValue(`ai.models.${providerName}.${field}`, value);
+	};
 
-	const handleAddModelConfiguration = () => {
-		const newModelKey = window.prompt(
-			"Enter a unique key for the new model configuration:",
+	const handleAddProvider = () => {
+		const providerName = window.prompt(
+			"Enter a unique name for the provider (e.g., 'MyOpenAI'):",
 		);
-		if (newModelKey && newModelKey.trim() !== "") {
-			const currentModels = getConfigurationValue("models") || {};
-			if (currentModels.hasOwnProperty(newModelKey)) {
-				alert(`Model configuration with key '${newModelKey}' already exists.`);
+		if (providerName && providerName.trim() !== "") {
+			const currentProviders = getConfigurationValue("ai.models") || {};
+			if (currentProviders.hasOwnProperty(providerName)) {
+				alert(`Provider '${providerName}' already exists.`);
 				return;
 			}
-			setConfigurationValue(`models.${newModelKey}`, {
+			setConfigurationValue(`ai.models.${providerName}`, {
 				provider: "",
 				apiKey: "",
-				baseURL: "",
 			});
 		}
 	};
 
-	const handleRemoveModelConfiguration = (modelKeyToRemove: string) => {
+	const handleRemoveProvider = (providerName: string) => {
 		if (
 			window.confirm(
-				`Are you sure you want to remove the model configuration '${modelKeyToRemove}'?`,
+				`Are you sure you want to remove provider '${providerName}'?`,
 			)
 		) {
-			const currentModels = getConfigurationValue("models") || {};
-			const { [modelKeyToRemove]: _removed, ...remainingModels } =
-				currentModels;
-			setConfigurationValue("models", remainingModels);
+			const currentProviders = getConfigurationValue("ai.models") || {};
+			const { [providerName]: _removed, ...remainingProviders } =
+				currentProviders;
+			setConfigurationValue("ai.models", remainingProviders);
 		}
 	};
 
 	return (
 		<div className="p-4 space-y-6 overflow-auto text-sm h-full">
-			<SettingsSection title="Appearance">
-				<div className="flex items-center justify-between">
-					<label
-						htmlFor="theme-toggle"
-						className="text-sm font-medium text-gray-700 dark:text-gray-300"
-					>
-						Theme
-					</label>
-					<button
-						id="theme-toggle"
-						onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-						className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-					>
-						{theme === "light" ? (
-							<Moon size={20} className="text-gray-600" />
-						) : (
-							<Sun size={20} className="text-yellow-400" />
-						)}
-					</button>
-				</div>
-			</SettingsSection>
-
-			<SettingsSection title="Defaults">
-				<div>
-					<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-						Model
-					</label>
-					<StyledInput
-						type="text"
-						value={config?.defaults?.model || ""}
-						onChange={handleDefaultChange("model")}
-						placeholder="e.g., gpt-4-turbo"
-					/>
-				</div>
-				<div>
-					<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-						Agent Type
-					</label>
-					<StyledInput
-						type="text"
-						value={config?.defaults?.agent || ""}
-						onChange={handleDefaultChange("agent")}
-						placeholder="e.g., interactiveCodeAgent"
-					/>
-				</div>
-			</SettingsSection>
-
-			<SettingsSection title="Model Configurations">
+			<SettingsSection title="Agents">
 				<div className="space-y-4">
-					{Object.entries(config?.models ?? {}).map(
-						([modelKey, modelConfig]: [string, any]) => (
+					{Object.entries(config.agents ?? {}).map(
+						([agentName, agentConfig]: [string, any]) => (
 							<div
-								key={modelKey}
-								className="p-3 border border-gray-200 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-850 shadow"
+								key={agentName}
+								className="p-3 border border-gray-200 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-850"
 							>
-								<div className="flex justify-between items-center mb-3">
-									<h5 className="font-medium text-md text-gray-700 dark:text-gray-300">
-										{modelKey}
-									</h5>
-									<ActionButton
-										onClick={() => handleRemoveModelConfiguration(modelKey)}
-										variant="danger"
-										size="sm"
-									>
-										Remove Model
-									</ActionButton>
-								</div>
-								<div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-									{Object.entries(modelConfig).map(([field, value]) => (
-										<div key={field}>
-											<label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-												{field}
-											</label>
-											<StyledInput
-												type={
-													field.toLowerCase().includes("key")
-														? "password"
-														: "text"
-												}
-												value={String(value || "")}
-												onChange={updateModelField(modelKey, field)}
-												placeholder={`Enter ${field}`}
-											/>
-										</div>
-									))}
+								<h5 className="font-medium text-sm text-gray-700 dark:text-gray-300 mb-2">
+									{agentName}
+								</h5>
+								<div className="text-xs text-gray-500 dark:text-gray-400">
+									Model: {agentConfig.model || "default"}
 								</div>
 							</div>
 						),
 					)}
-					<ActionButton
-						onClick={handleAddModelConfiguration}
-						variant="success"
-						size="md"
-						className="flex items-center gap-1"
-					>
-						<PlusCircle size={16} /> Add Model Configuration
+				</div>
+			</SettingsSection>
+
+			<SettingsSection title="Default Model">
+				<div>
+					<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+						Model Name
+					</label>
+					<StyledInput
+						type="text"
+						value={config.ai.defaultModel}
+						onChange={handleDefaultChange("defaultModel")}
+						placeholder="e.g., gpt-4.1"
+					/>
+				</div>
+			</SettingsSection>
+
+			<SettingsSection title="AI Providers">
+				<div className="space-y-4">
+					{Object.entries(config.ai.models ?? {}).map(
+						([providerName, providerConfig]: [string, any]) => (
+							<div
+								key={providerName}
+								className="p-3 border border-gray-200 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-850 shadow"
+							>
+								<div className="flex justify-between items-center mb-3">
+									<h5 className="font-medium text-md text-gray-700 dark:text-gray-300">
+										{providerName}
+									</h5>
+									<ActionButton
+										onClick={() => handleRemoveProvider(providerName)}
+										variant="danger"
+										size="sm"
+									>
+										Remove
+									</ActionButton>
+								</div>
+								<div className="space-y-3">
+									<div>
+										<label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+											Provider Type
+										</label>
+										<select
+											value={providerConfig.provider || ""}
+											onChange={(e) =>
+												updateProviderField(
+													providerName,
+													"provider",
+													e.target.value,
+												)
+											}
+											className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+										>
+											<option value="">Select provider...</option>
+											<option value="openai">OpenAI</option>
+											<option value="anthropic">Anthropic</option>
+											<option value="google">Google</option>
+											<option value="groq">Groq</option>
+											<option value="deepseek">DeepSeek</option>
+											<option value="cerebras">Cerebras</option>
+											<option value="xai">xAI</option>
+											<option value="perplexity">Perplexity</option>
+											<option value="openrouter">OpenRouter</option>
+											<option value="ollama">Ollama</option>
+											<option value="azure">Azure</option>
+											<option value="openaiCompatible">
+												OpenAI Compatible
+											</option>
+										</select>
+									</div>
+									{providerConfig.provider && (
+										<>
+											{providerConfig.provider !== "ollama" &&
+												providerConfig.provider !== "openaiCompatible" && (
+													<div>
+														<label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+															API Key
+														</label>
+														<StyledInput
+															type="password"
+															value={providerConfig.apiKey || ""}
+															onChange={(e) =>
+																updateProviderField(
+																	providerName,
+																	"apiKey",
+																	e.target.value,
+																)
+															}
+															placeholder="Enter API key"
+														/>
+													</div>
+												)}
+											{(providerConfig.provider === "azure" ||
+												providerConfig.provider === "ollama" ||
+												providerConfig.provider === "openaiCompatible") && (
+												<div>
+													<label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+														Base URL
+													</label>
+													<StyledInput
+														type="text"
+														value={providerConfig.baseURL || ""}
+														onChange={(e) =>
+															updateProviderField(
+																providerName,
+																"baseURL",
+																e.target.value,
+															)
+														}
+														placeholder="Enter base URL"
+													/>
+												</div>
+											)}
+										</>
+									)}
+								</div>
+							</div>
+						),
+					)}
+					<ActionButton onClick={handleAddProvider} variant="success" size="md">
+						Add Provider
 					</ActionButton>
+				</div>
+			</SettingsSection>
+
+			<SettingsSection title="Filesystem">
+				<div>
+					<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+						Default Provider
+					</label>
+					<StyledInput
+						type="text"
+						value={config.filesystem?.defaultProvider || ""}
+						onChange={(e) =>
+							setConfigurationValue(
+								"filesystem.defaultProvider",
+								e.target.value,
+							)
+						}
+						placeholder="e.g., browser"
+					/>
+				</div>
+				<div className="space-y-3">
+					{Object.entries(config.filesystem?.providers ?? {}).map(
+						([providerName, providerConfig]: [string, any]) => (
+							<div
+								key={providerName}
+								className="p-3 border border-gray-200 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-850"
+							>
+								<h5 className="font-medium text-sm text-gray-700 dark:text-gray-300">
+									{providerName}
+								</h5>
+								<div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+									Type: {providerConfig.type}
+								</div>
+							</div>
+						),
+					)}
+				</div>
+			</SettingsSection>
+
+			<SettingsSection title="Checkpoint">
+				<div>
+					<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+						Default Provider
+					</label>
+					<StyledInput
+						type="text"
+						value={config.checkpoint?.defaultProvider || ""}
+						onChange={(e) =>
+							setConfigurationValue(
+								"checkpoint.defaultProvider",
+								e.target.value,
+							)
+						}
+						placeholder="e.g., browser"
+					/>
+				</div>
+				<div className="space-y-3">
+					{Object.entries(config.checkpoint?.providers ?? {}).map(
+						([providerName, providerConfig]: [string, any]) => (
+							<div
+								key={providerName}
+								className="p-3 border border-gray-200 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-850"
+							>
+								<h5 className="font-medium text-sm text-gray-700 dark:text-gray-300">
+									{providerName}
+								</h5>
+								<div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+									Type: {providerConfig.type}
+								</div>
+							</div>
+						),
+					)}
 				</div>
 			</SettingsSection>
 		</div>

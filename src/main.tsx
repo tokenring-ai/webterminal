@@ -1,19 +1,20 @@
 import { AgentTeam, packageInfo as AgentPackage } from "@tokenring-ai/agent";
-import {
-	ModelRegistry,
-	packageInfo as AIClientPackage,
-} from "@tokenring-ai/ai-client";
-import AIService from "@tokenring-ai/ai-client/AIService";
-import { registerModels } from "@tokenring-ai/ai-client/models";
-import BrowserFileSystem from "@tokenring-ai/browser-file-system/BrowserFileSystem.js";
+import { packageInfo as AIClientPackage } from "@tokenring-ai/ai-client";
+import { packageInfo as BrowserAgentStoragePackage } from "@tokenring-ai/browser-agent-storage";
+import { packageInfo as BrowserFileSystemPackage } from "@tokenring-ai/browser-file-system";
+import { packageInfo as CheckpointPackage } from "@tokenring-ai/checkpoint";
+//import {packageInfo as CodebasePackage} from "@tokenring-ai/codebase";
 import {
 	FileSystemService,
 	packageInfo as FilesystemPackage,
 } from "@tokenring-ai/filesystem";
+import { packageInfo as IterablesPackage } from "@tokenring-ai/iterables";
+import { packageInfo as MemoryPackage } from "@tokenring-ai/memory";
+import { packageInfo as QueuePackage } from "@tokenring-ai/queue";
+import { packageInfo as TestingPackage } from "@tokenring-ai/testing";
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
-import agents from "./config/agents.ts";
 import { defaultChatConfig } from "./config/defaultChatConfig.ts";
 import { AgentTeamProvider } from "./context/AgentTeamProvider.js";
 import { ThemeProvider } from "./context/ThemeProvider.tsx";
@@ -28,33 +29,21 @@ function TerminalCore() {
 
 	useEffect(() => {
 		const initialize = async () => {
-			const agentTeam = new AgentTeam();
+			const agentTeam = new AgentTeam(defaultChatConfig);
 
 			await agentTeam.addPackages([
 				AgentPackage,
 				AIClientPackage,
+				BrowserAgentStoragePackage,
+				BrowserFileSystemPackage,
+				CheckpointPackage,
+				//CodebasePackage,
 				FilesystemPackage,
+				IterablesPackage,
+				MemoryPackage,
+				QueuePackage,
+				TestingPackage,
 			]);
-
-			const modelRegistry = new ModelRegistry();
-			await registerModels(defaultChatConfig.models, modelRegistry);
-
-			const filesystemService = new FileSystemService();
-			filesystemService.registerFileSystemProvider(
-				"browser",
-				new BrowserFileSystem(),
-			);
-			filesystemService.setActiveFileSystemProviderName("browser");
-
-			agentTeam.services.register(modelRegistry);
-			agentTeam.services.register(filesystemService);
-			agentTeam.services.register(
-				new AIService({ model: defaultChatConfig.defaults?.model || "gpt-4" }),
-			);
-
-			for (const name in agents) {
-				agentTeam.addAgentConfig(name, agents[name as keyof typeof agents]);
-			}
 
 			setTeam(agentTeam);
 		};
@@ -66,9 +55,7 @@ function TerminalCore() {
 
 	return (
 		<AgentTeamProvider team={team}>
-			<ThemeProvider>
-				<App />
-			</ThemeProvider>
+			<App />
 		</AgentTeamProvider>
 	);
 }

@@ -1,9 +1,9 @@
-import React, { useCallback, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import React, { useCallback, useEffect, useState } from "react";
 import MainPanel from "./components/MainPanel.tsx";
 import Sidebar from "./components/Sidebar.tsx";
 import Terminal from "./components/Terminal.tsx";
 import TopBar from "./components/TopBar.tsx";
+import { useAgentTeam } from "./context/AgentTeamProvider.tsx";
 import { ThemeProvider } from "./context/ThemeProvider.tsx";
 
 type Tab = {
@@ -14,73 +14,95 @@ type Tab = {
 	agentId?: string;
 };
 
+type TerminalTab = {
+	id: string;
+	title: string;
+	agentId: string;
+};
+
 function App() {
+	const team = useAgentTeam();
+	const [activeView, setActiveView] = useState("chats");
 	const [tabs, setTabs] = useState<Tab[]>([]);
-	const [activeTabId, setActiveTabId] = useState<string | null>(null);
+	const [terminalTabs, setTerminalTabs] = useState<TerminalTab[]>([]);
+	const [activeTerminalId, setActiveTerminalId] = useState<string | null>(null);
 	const [terminalHeight, setTerminalHeight] = useState(256);
 
-	const handleNewChat = useCallback(() => {
-		const newChatId = uuidv4();
-		const tabId = `chat-${newChatId}`;
-		const newTab: Tab = {
-			id: tabId,
-			title: `Chat ${tabs.filter((t) => t.type === "chat").length + 1}`,
-			type: "chat",
-			agentId: newChatId,
+	const handleNewChat = useCallback(async () => {
+		if (!team) return;
+		const agent = await team.createAgent("interactiveCodeAgent");
+		const newTab: TerminalTab = {
+			id: agent.id,
+			title: `Chat ${terminalTabs.length + 1}`,
+			agentId: agent.id,
 		};
-		setTabs((prevTabs) => [...prevTabs, newTab]);
-		setActiveTabId(newTab.id);
-	}, [tabs]);
+		setTerminalTabs((prev) => [...prev, newTab]);
+		setActiveTerminalId(newTab.id);
+	}, [team, terminalTabs]);
 
 	const openFileTab = useCallback((filePath: string) => {
 		const id = `file-${filePath}`;
 		const title = filePath.split("/").pop() || filePath;
 		setTabs((prev) => {
-			if (prev.find((t) => t.id === id)) return prev;
-			return [...prev, { id, title, type: "file" as const, filePath }];
+			const existing = prev.find((t) => t.id === id);
+			if (existing) return prev;
+			return [{ id, title, type: "file" as const, filePath }];
 		});
-		setActiveTabId(id);
+		setActiveView("files");
 	}, []);
 
-	const closeTab = useCallback(
-		(idToClose: string) => {
-			setTabs((prevTabs) => {
-				const newTabs = prevTabs.filter((t) => t.id !== idToClose);
-				if (activeTabId === idToClose) {
-					setActiveTabId(newTabs.length > 0 ? newTabs[0].id : null);
+	const closeTab = useCallback((idToClose: string) => {
+		setTabs((prev) => prev.filter((t) => t.id !== idToClose));
+	}, []);
+
+	const selectChatTab = useCallback((id: string) => {
+		setActiveTerminalId(id);
+	}, []);
+
+	const closeTerminal = useCallback(
+		(id: string) => {
+			if (!team) return;
+			const tab = terminalTabs.find((t) => t.id === id);
+			if (tab) {
+				const agent = team.getAgent(tab.agentId);
+				if (agent) team.deleteAgent(agent);
+			}
+			setTerminalTabs((prev) => {
+				const newTabs = prev.filter((t) => t.id !== id);
+				if (activeTerminalId === id) {
+					setActiveTerminalId(newTabs.length > 0 ? newTabs[0].id : null);
 				}
 				return newTabs;
 			});
 		},
-		[activeTabId],
+		[team, terminalTabs, activeTerminalId],
 	);
-
-	const selectTab = useCallback((id: string) => {
-		setActiveTabId(id);
-	}, []);
 
 	return (
 		<ThemeProvider>
-			<div className="h-screen flex flex-col bg-gray-900 text-gray-100 overflow-hidden">
+			<div className="h-screen flex flex-col bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 overflow-hidden">
 				<TopBar />
 				<div className="flex flex-1 overflow-hidden">
-					<Sidebar
-						onFileOpen={openFileTab}
-						chatTabs={tabs.filter((t) => t.type === "chat")}
-						onNewChat={handleNewChat}
-						onSelectTab={selectTab}
-					/>
+					<Sidebar activeView={activeView} onViewChange={setActiveView} />
 					<div className="flex-1 flex flex-col overflow-hidden">
 						<div className="flex-1 overflow-hidden">
 							<MainPanel
+								activeView={activeView}
 								tabs={tabs}
-								activeTabId={activeTabId}
-								onSelect={selectTab}
-								onClose={closeTab}
-								handleNewChat={handleNewChat}
+								onFileOpen={openFileTab}
+								onFileClose={closeTab}
+								onNewChat={handleNewChat}
+								onSelectChatTab={selectChatTab}
 							/>
 						</div>
-						<Terminal height={terminalHeight} onResize={setTerminalHeight} />
+						<Terminal
+							height={terminalHeight}
+							onResize={setTerminalHeight}
+							terminalTabs={terminalTabs}
+							activeTerminalId={activeTerminalId}
+							onSelectTerminal={setActiveTerminalId}
+							onCloseTerminal={closeTerminal}
+						/>
 					</div>
 				</div>
 			</div>

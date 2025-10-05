@@ -50,15 +50,16 @@ export default function FileViewer({
 	const [dirty, setDirty] = useState(false);
 
 	useEffect(() => {
+		setContent(null);
+		setError(null);
+		setDirty(false);
+
 		async function load() {
 			try {
-				setError(null);
 				if (!team) throw new Error("Team not found");
-				const fsService = team.services.getItemByType(FileSystemService);
-				if (!fsService) throw new Error("FileSystem service not found");
+				const fsService = team.services.requireItemByType(FileSystemService);
 				const data = await fsService.getFile(filePath);
 				setContent(data);
-				setDirty(false);
 			} catch (e) {
 				setError((e as Error).message);
 			}
@@ -198,7 +199,7 @@ export default function FileViewer({
 					</ActionButton>
 				</div>
 			</div>
-			<div className="flex-grow relative">
+			<div className="grow relative">
 				<Editor
 					height="100%"
 					language={language}

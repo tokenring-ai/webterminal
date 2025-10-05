@@ -1,6 +1,8 @@
 import React from "react";
-import ChatInstance from "./ChatInstance.tsx";
+import ChatList from "./ChatList.tsx";
+import FileTree from "./FileTree.tsx";
 import FileViewer from "./FileViewer.tsx";
+import SettingsPanel from "./SettingsPanel.tsx";
 
 type Tab = {
 	id: string;
@@ -11,70 +13,66 @@ type Tab = {
 };
 
 type MainPanelProps = {
+	activeView: string;
 	tabs: Tab[];
-	activeTabId: string | null;
-	onSelect: (id: string) => void;
-	onClose: (id: string) => void;
-	handleNewChat: () => void;
+	onFileOpen: (filePath: string) => void;
+	onFileClose: (id: string) => void;
+	onNewChat: () => void;
+	onSelectChatTab: (id: string) => void;
 };
 
 export default function MainPanel({
+	activeView,
 	tabs,
-	activeTabId,
-	onSelect,
-	onClose,
-	handleNewChat,
+	onFileOpen,
+	onFileClose,
+	onNewChat,
+	onSelectChatTab,
 }: MainPanelProps) {
-	const activeTab =
-		tabs.find((t: Tab) => t.id === activeTabId) || tabs[0] || null;
+	const fileTab = tabs.find((t) => t.type === "file");
+	const [treeCollapsed, setTreeCollapsed] = React.useState(false);
 
 	return (
-		<div className="flex-1 flex flex-col bg-gray-900">
-			<div className="flex-1 overflow-hidden">
-				{activeTab && activeTab.type === "chat" && (
-					<ChatInstance agentId={activeTab.agentId!} isActive={true} />
-				)}
-				{activeTab && activeTab.type === "file" && activeTab.filePath && (
-					<FileViewer
-						filePath={activeTab.filePath}
-						onFileDeleted={() => onClose(activeTab.id)}
-						onFileRenamed={(newPath: string) => {}}
+		<div className="h-full flex flex-col bg-white dark:bg-gray-900 overflow-hidden">
+			{activeView === "chats" && (
+				<div className="flex-1 overflow-y-auto p-4">
+					<ChatList
+						chatTabs={tabs.filter((t) => t.type === "chat")}
+						onNewChat={onNewChat}
+						onSelectChatTab={onSelectChatTab}
 					/>
-				)}
-				{!activeTab && (
-					<div className="flex items-center justify-center h-full">
-						<div className="text-center">
-							<div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-purple-600 to-indigo-700 rounded-lg flex items-center justify-center">
-								<svg
-									className="w-8 h-8 text-white"
-									fill="none"
-									stroke="currentColor"
-									viewBox="0 0 24 24"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth="2"
-										d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-									/>
-								</svg>
-							</div>
-							<h2 className="text-xl font-semibold text-white mb-2">
-								Welcome to WebTerminal
-							</h2>
-							<p className="text-gray-400 mb-4">
-								Start a new chat or open a file to begin
-							</p>
-							<button
-								onClick={handleNewChat}
-								className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
-							>
-								New Chat
-							</button>
+				</div>
+			)}
+			{activeView === "files" && (
+				<div className="flex-1 flex overflow-hidden">
+					{!treeCollapsed && (
+						<div className="w-64 border-r border-gray-300 dark:border-gray-700 overflow-y-auto p-4">
+							<FileTree onFileOpen={onFileOpen} />
 						</div>
-					</div>
-				)}
-			</div>
+					)}
+					{fileTab && (
+						<div className="flex-1 flex flex-col overflow-hidden relative">
+							<button
+								onClick={() => setTreeCollapsed(!treeCollapsed)}
+								className="absolute top-2 left-2 z-10 p-1.5 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 rounded border border-gray-400 dark:border-gray-600 text-gray-700 dark:text-gray-300"
+								title={treeCollapsed ? "Show file tree" : "Hide file tree"}
+							>
+								{treeCollapsed ? "▶" : "◀"}
+							</button>
+							<FileViewer
+								filePath={fileTab.filePath!}
+								onFileDeleted={() => onFileClose(fileTab.id)}
+								onFileRenamed={() => {}}
+							/>
+						</div>
+					)}
+				</div>
+			)}
+			{activeView === "settings" && (
+				<div className="flex-1 overflow-y-auto">
+					<SettingsPanel />
+				</div>
+			)}
 		</div>
 	);
 }

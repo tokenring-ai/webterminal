@@ -138,7 +138,7 @@ function TreeNodeComponent({
 							size={16}
 							className="shrink-0 text-blue-500 dark:text-blue-400"
 						/>
-						<span className="flex-grow truncate">{name}</span>
+						<span className="grow truncate">{name}</span>
 						<button title="Download" onClick={handleDownload}>
 							<Download
 								size={16}
@@ -182,7 +182,7 @@ function TreeNodeComponent({
 								className="shrink-0 text-yellow-500 dark:text-yellow-400"
 							/>
 						)}
-						<span className="flex-grow truncate">{name}</span>
+						<span className="grow truncate">{name}</span>
 						<button title="Rename" onClick={handleRename}>
 							<Edit2
 								size={14}
@@ -236,8 +236,7 @@ export default function FileTree({
 		try {
 			setError(null);
 			if (!team) return;
-			const fsService = team.services.getItemByType(FileSystemService);
-			if (!fsService) throw new Error("FileSystem service not found");
+			const fsService = team.services.requireItemByType(FileSystemService);
 			const ignoreFilter = await fsService.createIgnoreFilter();
 			const paths: string[] = [];
 			for await (const p of fsService.getDirectoryTree("", {
@@ -267,8 +266,7 @@ export default function FileTree({
 		setError(null);
 		try {
 			if (!team) return;
-			const fsService = team.services.getItemByType(FileSystemService);
-			if (!fsService) throw new Error("FileSystem service not found");
+			const fsService = team.services.requireItemByType(FileSystemService);
 			for (const file of files) {
 				const content = await file.text();
 				await fsService.writeFile(file.name, content);
@@ -338,8 +336,7 @@ export default function FileTree({
 							if (!fileName || !team) return;
 							try {
 								const fsService =
-									team.services.getItemByType(FileSystemService);
-								if (!fsService) throw new Error("FileSystem service not found");
+									team.services.requireItemByType(FileSystemService);
 								await fsService.writeFile(fileName, "");
 								await refreshTree();
 							} catch (err) {

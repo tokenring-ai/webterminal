@@ -2,37 +2,40 @@ import React, { useEffect, useRef, useState } from "react";
 import { useAgentTeam } from "../context/AgentTeamProvider.js";
 import { useRepl } from "../hooks/useRepl.js";
 
-import type Agent from "@tokenring-ai/agent/Agent";
+type TerminalTab = {
+	id: string;
+	title: string;
+	agentId: string;
+};
 
 type TerminalProps = {
 	height: number;
 	onResize: (height: number | ((prev: number) => number)) => void;
+	terminalTabs: TerminalTab[];
+	activeTerminalId: string | null;
+	onSelectTerminal: (id: string) => void;
+	onCloseTerminal: (id: string) => void;
 };
 
-function Terminal({ height, onResize }: TerminalProps) {
+function Terminal({
+	height,
+	onResize,
+	terminalTabs,
+	activeTerminalId,
+	onSelectTerminal,
+	onCloseTerminal,
+}: TerminalProps) {
 	const team = useAgentTeam();
-	const [terminalAgent, setTerminalAgent] = useState<Agent | null>(null);
-
-	useEffect(() => {
-		if (!team) return;
-		let agent: Agent | null = null;
-		team.createAgent("interactiveCodeAgent").then((a) => {
-			agent = a;
-			setTerminalAgent(a);
-		});
-		return () => {
-			if (agent) team.deleteAgent(agent);
-		};
-	}, [team]);
-
-	const agent = terminalAgent;
+	const activeTab = terminalTabs.find((t) => t.id === activeTerminalId);
+	const activeAgent =
+		activeTab && team ? team.getAgent(activeTab.agentId) : null;
 	const {
 		chunks,
 		handleInput,
 		getPreviousCommand,
 		getNextCommand,
 		historyIndex,
-	} = useRepl(terminalAgent);
+	} = useRepl(activeAgent ?? null);
 
 	const [input, setInput] = useState("");
 	const [currentInputValueBeforeHistory, setCurrentInputValueBeforeHistory] =
@@ -102,25 +105,46 @@ function Terminal({ height, onResize }: TerminalProps) {
 
 	return (
 		<div
-			className="bg-gray-900 border-t border-gray-700 flex flex-col"
+			className="bg-white dark:bg-gray-900 border-t border-gray-300 dark:border-gray-700 flex flex-col"
 			style={{ height: `${height}px` }}
 		>
 			<div
 				onMouseDown={handleMouseDown}
-				className="flex items-center justify-between px-4 py-2 bg-gray-850 border-b border-gray-700 cursor-ns-resize"
+				className="flex items-center justify-between px-4 py-2 bg-gray-100 dark:bg-gray-850 border-b border-gray-300 dark:border-gray-700 cursor-ns-resize"
 			>
 				<div className="flex items-center space-x-2">
 					<div className="w-3 h-3 rounded-full bg-red-500" />
 					<div className="w-3 h-3 rounded-full bg-yellow-500" />
 					<div className="w-3 h-3 rounded-full bg-green-500" />
-					<span className="ml-2 text-sm font-medium text-gray-300">
-						Terminal
-					</span>
+					<div className="ml-4 flex space-x-1">
+						{terminalTabs.map((tab) => (
+							<button
+								key={tab.id}
+								onClick={() => onSelectTerminal(tab.id)}
+								className={`px-3 py-1 text-xs rounded-t transition-colors flex items-center space-x-2 ${
+									activeTerminalId === tab.id
+										? "bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+										: "bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+								}`}
+							>
+								<span>{tab.title}</span>
+								<button
+									onClick={(e) => {
+										e.stopPropagation();
+										onCloseTerminal(tab.id);
+									}}
+									className="hover:text-red-400"
+								>
+									×
+								</button>
+							</button>
+						))}
+					</div>
 				</div>
 				<div className="flex items-center space-x-2">
-					<button className="p-1 rounded hover:bg-gray-700 transition-colors">
+					<button className="p-1 rounded hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors">
 						<svg
-							className="w-4 h-4 text-gray-400"
+							className="w-4 h-4 text-gray-600 dark:text-gray-400"
 							fill="none"
 							stroke="currentColor"
 							viewBox="0 0 24 24"
@@ -133,9 +157,9 @@ function Terminal({ height, onResize }: TerminalProps) {
 							/>
 						</svg>
 					</button>
-					<button className="p-1 rounded hover:bg-gray-700 transition-colors">
+					<button className="p-1 rounded hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors">
 						<svg
-							className="w-4 h-4 text-gray-400"
+							className="w-4 h-4 text-gray-600 dark:text-gray-400"
 							fill="none"
 							stroke="currentColor"
 							viewBox="0 0 24 24"
@@ -157,35 +181,39 @@ function Terminal({ height, onResize }: TerminalProps) {
 				{chunks.map((l: { kind: string; text: string }, i: number) => (
 					<div
 						key={i}
-						className={`mb-2 whitespace-pre-wrap ${typeToColor[l.kind] || "text-gray-300"}`}
+						className={`mb-2 whitespace-pre-wrap ${typeToColor[l.kind] || "text-gray-700 dark:text-gray-300"}`}
 					>
 						{l.text}
 					</div>
 				))}
 				<div className="mt-4">
-					<span className="text-green-400">user@webterminal:~$</span>
-					<span className="text-white animate-pulse ml-1">_</span>
+					<span className="text-green-600 dark:text-green-400">
+						user@webterminal:~$
+					</span>
+					<span className="text-gray-900 dark:text-white animate-pulse ml-1">
+						_
+					</span>
 				</div>
 			</div>
 			<form
 				onSubmit={handleSubmit}
-				className="border-t border-gray-700 p-2 flex items-center"
+				className="border-t border-gray-300 dark:border-gray-700 p-2 flex items-center"
 			>
-				<span className="text-green-400 mr-2">$</span>
+				<span className="text-green-600 dark:text-green-400 mr-2">$</span>
 				<input
 					type="text"
 					value={input}
 					onChange={(e) => setInput(e.target.value)}
 					onKeyDown={handleKeyDown}
-					className="flex-1 bg-transparent text-white outline-none"
+					className="flex-1 bg-transparent text-gray-900 dark:text-white outline-none"
 					placeholder="Type a command..."
 				/>
 				<button
 					type="submit"
-					className="ml-2 p-1 rounded hover:bg-gray-700 transition-colors"
+					className="ml-2 p-1 rounded hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
 				>
 					<svg
-						className="w-5 h-5 text-gray-400"
+						className="w-5 h-5 text-gray-600 dark:text-gray-400"
 						fill="none"
 						stroke="currentColor"
 						viewBox="0 0 24 24"

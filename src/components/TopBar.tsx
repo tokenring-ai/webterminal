@@ -1,13 +1,16 @@
+import { Moon, Sun } from "lucide-react";
 import React from "react";
+import { useTheme } from "../context/ThemeProvider.tsx";
 import useSession from "../hooks/useSession.js";
 
 function TopBar() {
+	const { theme, setTheme } = useTheme();
 	const { data: session, loading, signIn, signOut } = useSession() as any;
 
 	return (
-		<nav className="bg-gradient-to-r from-gray-900 to-gray-800 border-b border-gray-700 px-4 py-2 flex items-center justify-between">
+		<nav className="bg-linear-to-r from-gray-900 to-gray-800 border-b border-gray-700 px-4 py-2 flex items-center justify-between">
 			<div className="flex items-center space-x-3">
-				<div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-indigo-700 rounded-lg flex items-center justify-center">
+				<div className="w-8 h-8 bg-linear-to-br from-purple-600 to-indigo-700 rounded-lg flex items-center justify-center">
 					<svg
 						className="w-5 h-5 text-white"
 						fill="none"
@@ -25,26 +28,16 @@ function TopBar() {
 				<h1 className="text-xl font-semibold text-white">WebTerminal</h1>
 			</div>
 			<div className="flex items-center space-x-4">
-				<button className="p-2 rounded-lg hover:bg-gray-700 transition-colors">
-					<svg
-						className="w-5 h-5 text-gray-300"
-						fill="none"
-						stroke="currentColor"
-						viewBox="0 0 24 24"
-					>
-						<path
-							strokeLinecap="round"
-							strokeLinejoin="round"
-							strokeWidth="2"
-							d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-						/>
-						<path
-							strokeLinecap="round"
-							strokeLinejoin="round"
-							strokeWidth="2"
-							d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-						/>
-					</svg>
+				<button
+					onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+					className="p-2 rounded-lg hover:bg-gray-700 transition-colors"
+					title="Toggle theme"
+				>
+					{theme === "light" ? (
+						<Moon className="w-5 h-5 text-gray-300" />
+					) : (
+						<Sun className="w-5 h-5 text-yellow-400" />
+					)}
 				</button>
 				<button className="relative p-2 rounded-lg hover:bg-gray-700 transition-colors">
 					<svg
@@ -69,7 +62,7 @@ function TopBar() {
 						onClick={signOut}
 						className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-700 transition-colors"
 					>
-						<div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600" />
+						<div className="w-6 h-6 rounded-full bg-linear-to-br from-purple-500 to-indigo-600" />
 						<span className="text-sm text-gray-300">
 							{session.user?.name || "User"}
 						</span>
@@ -79,7 +72,7 @@ function TopBar() {
 						onClick={signIn}
 						className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-700 transition-colors"
 					>
-						<div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600" />
+						<div className="w-6 h-6 rounded-full bg-linear-to-br from-purple-500 to-indigo-600" />
 						<span className="text-sm text-gray-300">Sign In</span>
 					</button>
 				)}
