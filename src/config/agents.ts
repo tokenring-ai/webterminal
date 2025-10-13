@@ -1,4 +1,4 @@
-import type { AgentConfig } from "@tokenring-ai/agent/Agent";
+import type { AgentConfig } from "@tokenring-ai/agent/types";
 
 export const interactiveCodeAgent: AgentConfig = {
 	name: "Interactive Code Agent",

@@ -33,10 +33,7 @@ export function useSession() {
 		// Optionally, poll or listen for changes
 	}, [fetchSession]);
 
-	// Redirect to sign in
-	const signIn = useCallback(() => {
-		window.location.href = "/api/auth/signin/google";
-	}, []);
+
 
 	// Sign out and refresh session
 	const signOut = useCallback(async () => {
@@ -53,7 +50,6 @@ export function useSession() {
 		data: session,
 		loading,
 		error,
-		signIn,
 		signOut,
 		refresh: fetchSession,
 	};

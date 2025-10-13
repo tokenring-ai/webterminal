@@ -6,7 +6,7 @@ import SettingsPanel from "./SettingsPanel.tsx";
 
 type Tab = {
 	id: string;
-	title?: string;
+	title: string;
 	type: string;
 	agentId?: string;
 	filePath?: string;
@@ -34,7 +34,7 @@ export default function MainPanel({
 
 	return (
 		<div className="h-full flex flex-col bg-white dark:bg-gray-900 overflow-hidden">
-			{activeView === "chats" && (
+			{activeView === "agents" && (
 				<div className="flex-1 overflow-y-auto p-4">
 					<ChatList
 						chatTabs={tabs.filter((t) => t.type === "chat")}

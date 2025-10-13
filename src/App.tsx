@@ -22,7 +22,7 @@ type TerminalTab = {
 
 function App() {
 	const team = useAgentTeam();
-	const [activeView, setActiveView] = useState("chats");
+	const [activeView, setActiveView] = useState("agents");
 	const [tabs, setTabs] = useState<Tab[]>([]);
 	const [terminalTabs, setTerminalTabs] = useState<TerminalTab[]>([]);
 	const [activeTerminalId, setActiveTerminalId] = useState<string | null>(null);
@@ -33,7 +33,7 @@ function App() {
 		const agent = await team.createAgent("interactiveCodeAgent");
 		const newTab: TerminalTab = {
 			id: agent.id,
-			title: `Chat ${terminalTabs.length + 1}`,
+			title: agent.options.name,
 			agentId: agent.id,
 		};
 		setTerminalTabs((prev) => [...prev, newTab]);
@@ -102,6 +102,7 @@ function App() {
 							activeTerminalId={activeTerminalId}
 							onSelectTerminal={setActiveTerminalId}
 							onCloseTerminal={closeTerminal}
+							onNewAgent={handleNewChat}
 						/>
 					</div>
 				</div>

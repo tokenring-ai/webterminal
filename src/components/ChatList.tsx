@@ -25,7 +25,7 @@ export default function ChatList({
 	return (
 		<>
 			<h2 className="text-gray-400 text-sm font-semibold mb-4 px-2">
-				RECENT CHATS
+				RECENT AGENTS
 			</h2>
 			<div className="space-y-2">
 				{chatTabs &&
@@ -46,7 +46,7 @@ export default function ChatList({
 											{title}
 										</p>
 										<p className="text-xs text-gray-400 truncate">
-											Active chat session
+											Active agent session
 										</p>
 									</div>
 								</div>
@@ -71,7 +71,7 @@ export default function ChatList({
 						d="M12 6v6m0 0v6m0-6h6m-6 0H6"
 					/>
 				</svg>
-				<span>New Chat</span>
+				<span>New Agent</span>
 			</button>
 		</>
 	);

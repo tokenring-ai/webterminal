@@ -8,7 +8,7 @@ import {
 	FileSystemService,
 	packageInfo as FilesystemPackage,
 } from "@tokenring-ai/filesystem";
-import { packageInfo as IterablesPackage } from "@tokenring-ai/iterables";
+import { packageInfo as ScriptingPackage } from "@tokenring-ai/scripting";
 import { packageInfo as MemoryPackage } from "@tokenring-ai/memory";
 import { packageInfo as QueuePackage } from "@tokenring-ai/queue";
 import { packageInfo as TestingPackage } from "@tokenring-ai/testing";
@@ -39,9 +39,9 @@ function TerminalCore() {
 				CheckpointPackage,
 				//CodebasePackage,
 				FilesystemPackage,
-				IterablesPackage,
 				MemoryPackage,
 				QueuePackage,
+        ScriptingPackage,
 				TestingPackage,
 			]);
 

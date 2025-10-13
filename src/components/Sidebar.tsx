@@ -10,10 +10,10 @@ function Sidebar({ activeView, onViewChange }: SidebarProps) {
 	return (
 		<div className="w-16 bg-gray-200 dark:bg-gray-800 flex flex-col items-center py-4 space-y-6">
 			<button
-				onClick={() => onViewChange("chats")}
+				onClick={() => onViewChange("agents")}
 				className={clsx(
 					"p-3 rounded-lg transition-all duration-200 group relative",
-					activeView === "chats"
+					activeView === "agents"
 						? "bg-gray-300 dark:bg-gray-700 text-purple-600 dark:text-purple-400"
 						: "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-300 dark:hover:bg-gray-700",
 				)}
@@ -32,7 +32,7 @@ function Sidebar({ activeView, onViewChange }: SidebarProps) {
 					/>
 				</svg>
 				<span className="absolute left-full ml-2 px-2 py-1 bg-gray-700 dark:bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
-					Recent Chats
+					Recent Agents
 				</span>
 			</button>
 			<button

@@ -13,7 +13,7 @@
 		"@tokenring-ai/codebase": "0.1.0",
 		"@tokenring-ai/config": "0.1.0",
 		"@tokenring-ai/filesystem": "0.1.0",
-		"@tokenring-ai/iterables": "0.1.0",
+		"@tokenring-ai/scripting": "0.1.0",
 		"@tokenring-ai/memory": "0.1.0",
 		"@tokenring-ai/queue": "0.1.0",
 		"@tokenring-ai/testing": "0.1.0",
