@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useAgentTeam } from "../context/AgentTeamProvider.js";
+import {useAgentManager} from "../context/TokenRingAppProvider.js";
 import { useRepl } from "../hooks/useRepl.js";
 
 type TerminalTab = {
@@ -27,10 +27,10 @@ function Terminal({
 	onCloseTerminal,
 	onNewAgent,
 }: TerminalProps) {
-	const team = useAgentTeam();
+	const agentManager = useAgentManager();
 	const activeTab = terminalTabs.find((t) => t.id === activeTerminalId);
 	const activeAgent =
-		activeTab && team ? team.getAgent(activeTab.agentId) : null;
+		activeTab && agentManager ? agentManager.getAgent(activeTab.agentId) : null;
 	const {
 		chunks,
 		handleInput,

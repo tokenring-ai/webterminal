@@ -10,7 +10,7 @@ import {
 	Trash2,
 } from "lucide-react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useAgentTeam } from "../context/AgentTeamProvider.js";
+import { useApp } from "../context/TokenRingAppProvider.js";
 
 type TreeNode = {
 	__children__: Record<string, TreeNode>;
@@ -53,7 +53,7 @@ function TreeNodeComponent({
 	refreshTree,
 	setError,
 }: TreeNodeProps) {
-	const team = useAgentTeam();
+	const team = useApp();
 	const [open, setOpen] = useState(depth <= 0);
 	const isFile = node.__isFile__;
 	const name = node.__name__;
@@ -224,7 +224,7 @@ export default function FileTree({
 }: {
 	onFileOpen: (filePath: string) => void;
 }) {
-	const team = useAgentTeam();
+	const team = useApp();
 	const [treeData, setTreeData] = useState<Record<string, TreeNode> | null>(
 		null,
 	);

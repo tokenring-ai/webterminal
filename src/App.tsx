@@ -3,7 +3,7 @@ import MainPanel from "./components/MainPanel.tsx";
 import Sidebar from "./components/Sidebar.tsx";
 import Terminal from "./components/Terminal.tsx";
 import TopBar from "./components/TopBar.tsx";
-import { useAgentTeam } from "./context/AgentTeamProvider.tsx";
+import {useAgentManager, useApp} from "./context/TokenRingAppProvider.tsx";
 import { ThemeProvider } from "./context/ThemeProvider.tsx";
 
 type Tab = {
@@ -21,7 +21,7 @@ type TerminalTab = {
 };
 
 function App() {
-	const team = useAgentTeam();
+	const agentManager = useAgentManager();
 	const [activeView, setActiveView] = useState("agents");
 	const [tabs, setTabs] = useState<Tab[]>([]);
 	const [terminalTabs, setTerminalTabs] = useState<TerminalTab[]>([]);
@@ -29,16 +29,16 @@ function App() {
 	const [terminalHeight, setTerminalHeight] = useState(256);
 
 	const handleNewChat = useCallback(async () => {
-		if (!team) return;
-		const agent = await team.createAgent("interactiveCodeAgent");
+		if (!agentManager) return;
+		const agent = await agentManager.spawnAgent("interactiveCodeAgent");
 		const newTab: TerminalTab = {
 			id: agent.id,
-			title: agent.options.name,
+			title: agent.config.name,
 			agentId: agent.id,
 		};
 		setTerminalTabs((prev) => [...prev, newTab]);
 		setActiveTerminalId(newTab.id);
-	}, [team, terminalTabs]);
+	}, [agentManager, terminalTabs]);
 
 	const openFileTab = useCallback((filePath: string) => {
 		const id = `file-${filePath}`;
@@ -61,11 +61,11 @@ function App() {
 
 	const closeTerminal = useCallback(
 		(id: string) => {
-			if (!team) return;
+			if (!agentManager) return;
 			const tab = terminalTabs.find((t) => t.id === id);
 			if (tab) {
-				const agent = team.getAgent(tab.agentId);
-				if (agent) team.deleteAgent(agent);
+				const agent = agentManager.getAgent(tab.agentId);
+				if (agent) agentManager.deleteAgent(agent);
 			}
 			setTerminalTabs((prev) => {
 				const newTabs = prev.filter((t) => t.id !== id);
@@ -75,7 +75,7 @@ function App() {
 				return newTabs;
 			});
 		},
-		[team, terminalTabs, activeTerminalId],
+		[agentManager, terminalTabs, activeTerminalId],
 	);
 
 	return (

@@ -1,6 +1,6 @@
 import { HumanInterfaceRequest } from "@tokenring-ai/agent/HumanInterfaceRequest";
 import React, { useEffect, useState } from "react";
-import { useAgentTeam } from "../context/AgentTeamProvider.tsx";
+import {useAgentManager, useApp} from "../context/TokenRingAppProvider.tsx";
 import HumanRequestDialog from "./HumanRequestDialog.tsx";
 
 type Message = {
@@ -20,8 +20,8 @@ const ChatInstance = ({
 	agentId: string;
 	isActive: boolean;
 }) => {
-	const team = useAgentTeam();
-	const agent = team?.getAgent(agentId) || null;
+	const agentManager = useAgentManager();
+	const agent = agentManager?.getAgent(agentId) || null;
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [input, setInput] = useState("");
 	const [pendingRequest, setPendingRequest] = useState<PendingRequest | null>(

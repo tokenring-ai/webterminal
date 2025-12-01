@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebTerminal - AI Coding Terminal & File Explorer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+     /* Custom scrollbar */
+     ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+     }
+     ::-webkit-scrollbar-track {
+      background: #1a1b26;
+     }
+     ::-webkit-scrollbar-thumb {
+      background: #2a2b3a;
+      border-radius: 4px;
+     }
+     ::-webkit-scrollbar-thumb:hover {
+      background: #3a3b4a;
+     }
+
+     /* Terminal animation */
+     @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0; }
+      100% { opacity: 1; }
+     }
+     .animate-blink {
+      animation: blink 1s infinite;
+     }
+
+     /* Custom range input */
+     input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      background: transparent;
+      cursor: pointer;
+     }
+     input[type="range"]::-webkit-slider-track {
+      background: #2a2b3a;
+      height: 8px;
+      border-radius: 4px;
+     }
+     input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      background: #7c3aed;
+      height: 20px;
+      width: 20px;
+      border-radius: 50%;
+      margin-top: -6px;
+     }
+     input[type="range"]::-moz-range-track {
+      background: #2a2b3a;
+      height: 8px;
+      border-radius: 4px;
+     }
+     input[type="range"]::-moz-range-thumb {
+      background: #7c3aed;
+      height: 20px;
+      width: 20px;
+      border-radius: 50%;
+      border: none;
+     }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 h-screen overflow-hidden">
+<div class="flex flex-col h-full">
+    <!-- Top Navigation Bar -->
+    <nav class="bg-linear-to-r from-gray-900 to-gray-800 border-b border-gray-700 px-4 py-2 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-linear-to-br from-purple-600 to-indigo-700 rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+            </div>
+            <h1 class="text-xl font-semibold text-white">WebTerminal</h1>
+        </div>
+
+        <div class="flex items-center space-x-4">
+            <button class="p-2 rounded-lg hover:bg-gray-700 transition-colors">
+                <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+            </button>
+
+            <button class="relative p-2 rounded-lg hover:bg-gray-700 transition-colors">
+                <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                </svg>
+                <span class="absolute top-1 right-1 w-2 h-2 bg-purple-500 rounded-full"></span>
+            </button>
+
+            <button class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-700 transition-colors">
+                <div class="w-6 h-6 rounded-full bg-linear-to-br from-purple-500 to-indigo-600"></div>
+                <span class="text-sm text-gray-300">User</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <div class="flex flex-1 overflow-hidden">
+        <!-- Sidebar -->
+        <div class="w-16 bg-gray-800 flex flex-col items-center py-4 space-y-6">
+            <!-- Recent Chats Tab -->
+            <button class="p-3 rounded-lg bg-gray-700 text-purple-400 transition-all duration-200 group relative">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                </svg>
+                <span class="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+            Recent Chats
+          </span>
+            </button>
+
+            <!-- File Tree Tab -->
+            <button class="p-3 rounded-lg text-gray-400 hover:text-white hover:bg-gray-700 transition-all duration-200 group relative">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+                </svg>
+                <span class="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+            File Explorer
+          </span>
+            </button>
+
+            <!-- Settings Tab -->
+            <button class="p-3 rounded-lg text-gray-400 hover:text-white hover:bg-gray-700 transition-all duration-200 group relative">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                <span class="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+            Settings
+          </span>
+            </button>
+
+            <div class="grow"></div>
+
+            <!-- Dock Position Toggle -->
+            <button class="p-3 rounded-lg text-gray-400 hover:text-white hover:bg-gray-700 transition-all duration-200 group relative">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 0h-4m4 0l-5-5"></path>
+                </svg>
+                <span class="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+            Dock Position
+          </span>
+            </button>
+        </div>
+
+        <!-- Sidebar Content -->
+        <div class="w-64 bg-gray-850 border-r border-gray-700 flex flex-col">
+            <!-- Recent Chats Content -->
+            <div class="flex-1 overflow-y-auto p-4">
+                <h2 class="text-gray-400 text-sm font-semibold mb-4 px-2">RECENT CHATS</h2>
+
+                <div class="space-y-2">
+                    <button class="w-full text-left p-3 rounded-lg bg-gray-800 hover:bg-gray-750 transition-colors group">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 rounded-full bg-linear-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
+                                <span class="text-white text-xs font-bold">AI</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-white truncate">React Setup</p>
+                                <p class="text-xs text-gray-400 truncate">How to set up a new React project...</p>
+                            </div>
+                        </div>
+                    </button>
+
+                    <button class="w-full text-left p-3 rounded-lg hover:bg-gray-800 transition-colors group">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 rounded-full bg-linear-to-br from-green-500 to-teal-600 flex items-center justify-center">
+                                <span class="text-white text-xs font-bold">JS</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-white truncate">JavaScript Arrays</p>
+                                <p class="text-xs text-gray-400 truncate">Explain array methods in JavaScript...</p>
+                            </div>
+                        </div>
+                    </button>
+
+                    <button class="w-full text-left p-3 rounded-lg hover:bg-gray-800 transition-colors group">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 rounded-full bg-linear-to-br from-blue-500 to-cyan-600 flex items-center justify-center">
+                                <span class="text-white text-xs font-bold">API</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-white truncate">REST API Design</p>
+                                <p class="text-xs text-gray-400 truncate">Best practices for REST API design...</p>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+
+                <button class="mt-6 w-full py-3 px-4 rounded-lg border border-dashed border-gray-600 text-gray-400 hover:text-white hover:border-gray-500 transition-colors flex items-center justify-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    <span>New Chat</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col bg-gray-900">
+            <!-- File Explorer Header -->
+            <div class="p-4 border-b border-gray-800">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-semibold text-white">File Explorer</h2>
+                    <div class="flex space-x-2">
+                        <button class="p-2 rounded-lg hover:bg-gray-800 transition-colors">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                        </button>
+                        <button class="p-2 rounded-lg hover:bg-gray-800 transition-colors">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Breadcrumb -->
+                <div class="flex items-center space-x-1 text-sm">
+                    <button class="text-gray-400 hover:text-white transition-colors">home</button>
+                    <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                    <button class="text-gray-400 hover:text-white transition-colors">projects</button>
+                    <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                    <button class="text-white font-medium">webterminal</button>
+                </div>
+            </div>
+
+            <!-- File Tree -->
+            <div class="flex-1 overflow-y-auto p-4">
+                <div class="space-y-1">
+                    <!-- Folder -->
+                    <div class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-800 cursor-pointer group">
+                        <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path>
+                        </svg>
+                        <span class="text-gray-300 group-hover:text-white">src</span>
+                        <div class="ml-auto flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button class="p-1 rounded hover:bg-gray-700">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                            </button>
+                            <button class="p-1 rounded hover:bg-gray-700">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Nested files in src folder -->
+                    <div class="ml-6 space-y-1">
+                        <div class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-800 cursor-pointer group">
+                            <svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-gray-300 group-hover:text-white">App.js</span>
+                            <div class="ml-auto flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button class="p-1 rounded hover:bg-gray-700">
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                                    </svg>
+                                </button>
+                                <button class="p-1 rounded hover:bg-gray-700">
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-800 cursor-pointer group">
+                            <svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-gray-300 group-hover:text-white">index.js</span>
+                            <div class="ml-auto flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button class="p-1 rounded hover:bg-gray-700">
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                                    </svg>
+                                </button>
+                                <button class="p-1 rounded hover:bg-gray-700">
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-800 cursor-pointer group">
+                            <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path>
+                            </svg>
+                            <span class="text-gray-300 group-hover:text-white">components</span>
+                            <div class="ml-auto flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button class="p-1 rounded hover:bg-gray-700">
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                </button>
+                                <button class="p-1 rounded hover:bg-gray-700">
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- More files and folders -->
+                    <div class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-800 cursor-pointer group">
+                        <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path>
+                        </svg>
+                        <span class="text-gray-300 group-hover:text-white">public</span>
+                        <div class="ml-auto flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button class="p-1 rounded hover:bg-gray-700">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                            </button>
+                            <button class="p-1 rounded hover:bg-gray-700">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-800 cursor-pointer group">
+                        <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V8a2 2 0 00-2-2h-5L9 4H4z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span class="text-gray-300 group-hover:text-white">package.json</span>
+                        <div class="ml-auto flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button class="p-1 rounded hover:bg-gray-700">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                                </svg>
+                            </button>
+                            <button class="p-1 rounded hover:bg-gray-700">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-800 cursor-pointer group">
+                        <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V8a2 2 0 00-2-2h-5L9 4H4z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span class="text-gray-300 group-hover:text-white">README.md</span>
+                        <div class="ml-auto flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button class="p-1 rounded hover:bg-gray-700">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                                </svg>
+                            </button>
+                            <button class="p-1 rounded hover:bg-gray-700">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terminal Container (Docked at Bottom) -->
+    <div class="h-64 bg-gray-900 border-t border-gray-700 flex flex-col transition-all duration-300" style="z-index: 50;">
+        <!-- Terminal Header -->
+        <div class="flex items-center justify-between px-4 py-2 bg-gray-850 border-b border-gray-700 cursor-ns-resize">
+            <div class="flex items-center space-x-2">
+                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                <span class="ml-2 text-sm font-medium text-gray-300">Terminal</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button class="p-1 rounded hover:bg-gray-700 transition-colors">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+                <button class="p-1 rounded hover:bg-gray-700 transition-colors">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <button class="p-1 rounded hover:bg-gray-700 transition-colors">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Terminal Content -->
+        <div class="flex-1 overflow-y-auto p-4 font-mono text-sm">
+            <div class="mb-2">
+                <span class="text-green-400">user@webterminal:~$</span>
+                <span class="text-white"> npm start</span>
+            </div>
+
+            <div class="mb-2 text-gray-300">
+                > webterminal@1.0.0 start<br>
+                > react-scripts start
+            </div>
+
+            <div class="mb-2 text-cyan-400">
+                Starting the development server...
+            </div>
+
+            <div class="mb-2 text-green-400">
+                Compiled successfully!
+            </div>
+
+            <div class="mb-2 text-gray-300">
+                You can now view webterminal in the browser.<br>
+                <br>
+                Local:            http://localhost:3000<br>
+                On Your Network:  http://192.168.1.5:3000
+            </div>
+
+            <div class="mb-2 text-yellow-400">
+                Note that the development build is not optimized.<br>
+                To create a production build, use npm run build.
+            </div>
+
+            <div class="mt-4">
+                <span class="text-green-400">user@webterminal:~$</span>
+                <span class="text-white animate-pulse">_</span>
+            </div>
+        </div>
+
+        <!-- Terminal Input -->
+        <div class="border-t border-gray-700 p-2 flex items-center">
+            <span class="text-green-400 mr-2">$</span>
+            <input type="text" class="flex-1 bg-transparent text-white outline-none" placeholder="Type a command...">
+            <button class="ml-2 p-1 rounded hover:bg-gray-700 transition-colors">
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+</body>
+</html>

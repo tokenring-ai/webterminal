@@ -2,7 +2,7 @@ import { Editor } from "@monaco-editor/react";
 import { FileSystemService } from "@tokenring-ai/filesystem";
 import { AlertTriangle, Edit2, Save, Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { useAgentTeam } from "../context/AgentTeamProvider.tsx";
+import { useApp } from "../context/TokenRingAppProvider.tsx";
 import { useTheme } from "../context/ThemeProvider.tsx";
 
 const ActionButton = ({
@@ -42,7 +42,7 @@ export default function FileViewer({
 	onFileDeleted?: () => void;
 	onFileRenamed?: (newPath: string) => void;
 }) {
-	const team = useAgentTeam();
+	const team = useApp();
 	const { theme } = useTheme();
 
 	const [content, setContent] = useState<string | null>(null);

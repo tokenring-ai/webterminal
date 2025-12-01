@@ -1,22 +1,24 @@
-import { AgentTeam, packageInfo as AgentPackage } from "@tokenring-ai/agent";
-import { packageInfo as AIClientPackage } from "@tokenring-ai/ai-client";
-import { packageInfo as BrowserAgentStoragePackage } from "@tokenring-ai/browser-agent-storage";
-import { packageInfo as BrowserFileSystemPackage } from "@tokenring-ai/browser-file-system";
-import { packageInfo as CheckpointPackage } from "@tokenring-ai/checkpoint";
-//import {packageInfo as CodebasePackage} from "@tokenring-ai/codebase";
-import {
-	FileSystemService,
-	packageInfo as FilesystemPackage,
-} from "@tokenring-ai/filesystem";
-import { packageInfo as ScriptingPackage } from "@tokenring-ai/scripting";
-import { packageInfo as MemoryPackage } from "@tokenring-ai/memory";
-import { packageInfo as QueuePackage } from "@tokenring-ai/queue";
-import { packageInfo as TestingPackage } from "@tokenring-ai/testing";
+
+import AgentPackage, {AgentManager} from "@tokenring-ai/agent";
+import AIClientPackage from "@tokenring-ai/ai-client";
+import TokenRingApp, {PluginManager} from "@tokenring-ai/app";
+import ChatPackage from "@tokenring-ai/chat";
+import CheckpointPackage from "@tokenring-ai/checkpoint";
+import FilesystemPackage from "@tokenring-ai/filesystem";
+import MCPPackage from "@tokenring-ai/mcp";
+import MemoryPackage from "@tokenring-ai/memory";
+import QueuePackage from "@tokenring-ai/queue";
+import ScriptingPackage from "@tokenring-ai/scripting";
+import TestingPackage from "@tokenring-ai/testing";
+import BrowserAgentStoragePackage from "@tokenring-ai/browser-agent-storage";
+import BrowserFileSystemPackage from "@tokenring-ai/browser-file-system";
+
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
+import agents from "./config/agents.ts";
 import { defaultChatConfig } from "./config/defaultChatConfig.ts";
-import { AgentTeamProvider } from "./context/AgentTeamProvider.js";
+import { TokenRingAppProvider } from "./context/TokenRingAppProvider.js";
 import { ThemeProvider } from "./context/ThemeProvider.tsx";
 
 import "./index.css";
@@ -25,38 +27,47 @@ const container = document.getElementById("root")!;
 const root = createRoot(container);
 
 function TerminalCore() {
-	const [team, setTeam] = useState<AgentTeam | null>(null);
+	const [app, setApp] = useState<TokenRingApp | null>(null);
 
 	useEffect(() => {
 		const initialize = async () => {
-			const agentTeam = new AgentTeam(defaultChatConfig);
+      const app = new TokenRingApp(defaultChatConfig);
 
-			await agentTeam.addPackages([
+
+      const pluginManager = new PluginManager(app)
+      app.addServices(pluginManager);
+
+      await pluginManager.installPlugins([
 				AgentPackage,
 				AIClientPackage,
 				BrowserAgentStoragePackage,
 				BrowserFileSystemPackage,
+        ChatPackage,
 				CheckpointPackage,
 				//CodebasePackage,
 				FilesystemPackage,
 				MemoryPackage,
+        MCPPackage,
 				QueuePackage,
         ScriptingPackage,
 				TestingPackage,
 			]);
 
-			setTeam(agentTeam);
+
+      const agentManager = app.requireService(AgentManager);
+
+			setApp(app);
 		};
 
 		initialize();
 	}, []);
 
-	if (!team) return <div>Loading...</div>;
+	if (!app) return <div>Loading...</div>;
 
 	return (
-		<AgentTeamProvider team={team}>
+		<TokenRingAppProvider app={app}>
 			<App />
-		</AgentTeamProvider>
+		</TokenRingAppProvider>
 	);
 }
 

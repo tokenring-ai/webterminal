@@ -139,7 +139,7 @@ export default function SettingsPanel() {
 					</label>
 					<StyledInput
 						type="text"
-						value={config.ai.defaultModel}
+						value={config.chat.defaultModel}
 						onChange={handleDefaultChange("defaultModel")}
 						placeholder="e.g., gpt-4.1"
 					/>
