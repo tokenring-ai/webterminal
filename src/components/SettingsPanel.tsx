@@ -77,7 +77,7 @@ export default function SettingsPanel() {
 		field: string,
 		value: string,
 	) => {
-		setConfigurationValue(`ai.models.${providerName}.${field}`, value);
+		setConfigurationValue(`ai.providers.${providerName}.${field}`, value);
 	};
 
 	const handleAddProvider = () => {
@@ -85,12 +85,12 @@ export default function SettingsPanel() {
 			"Enter a unique name for the provider (e.g., 'MyOpenAI'):",
 		);
 		if (providerName && providerName.trim() !== "") {
-			const currentProviders = getConfigurationValue("ai.models") || {};
+			const currentProviders = getConfigurationValue("ai.providers") || {};
 			if (currentProviders.hasOwnProperty(providerName)) {
 				alert(`Provider '${providerName}' already exists.`);
 				return;
 			}
-			setConfigurationValue(`ai.models.${providerName}`, {
+			setConfigurationValue(`ai.providers.${providerName}`, {
 				provider: "",
 				apiKey: "",
 			});
@@ -103,10 +103,10 @@ export default function SettingsPanel() {
 				`Are you sure you want to remove provider '${providerName}'?`,
 			)
 		) {
-			const currentProviders = getConfigurationValue("ai.models") || {};
+			const currentProviders = getConfigurationValue("ai.providers") || {};
 			const { [providerName]: _removed, ...remainingProviders } =
 				currentProviders;
-			setConfigurationValue("ai.models", remainingProviders);
+			setConfigurationValue("ai.providers", remainingProviders);
 		}
 	};
 
@@ -148,7 +148,7 @@ export default function SettingsPanel() {
 
 			<SettingsSection title="AI Providers">
 				<div className="space-y-4">
-					{Object.entries(config.ai.models ?? {}).map(
+					{Object.entries(config.ai.providers ?? {}).map(
 						([providerName, providerConfig]: [string, any]) => (
 							<div
 								key={providerName}

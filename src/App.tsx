@@ -30,7 +30,7 @@ function App() {
 
 	const handleNewChat = useCallback(async () => {
 		if (!agentManager) return;
-		const agent = await agentManager.spawnAgent("interactiveCodeAgent");
+		const agent = await agentManager.spawnAgent({ agentType: "interactiveCodeAgent", headless: false });
 		const newTab: TerminalTab = {
 			id: agent.id,
 			title: agent.config.name,

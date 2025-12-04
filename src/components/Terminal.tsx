@@ -118,26 +118,22 @@ function Terminal({
 			>
 				<div className="flex items-center space-x-0">
 					{terminalTabs.map((tab) => (
-						<button
+						<div
 							key={tab.id}
-							onClick={() => onSelectTerminal(tab.id)}
 							className={`px-4 py-1.5 text-sm transition-colors flex items-center space-x-2 border-r border-gray-300 dark:border-gray-700 ${
 								activeTerminalId === tab.id
 									? "bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-medium"
 									: "bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-750"
 							}`}
 						>
-							<span>{tab.title}</span>
+							<span onClick={() => onSelectTerminal(tab.id)} className="cursor-pointer">{tab.title}</span>
 							<button
-								onClick={(e) => {
-									e.stopPropagation();
-									onCloseTerminal(tab.id);
-								}}
+								onClick={() => onCloseTerminal(tab.id)}
 								className="ml-1 hover:text-red-500 text-gray-500 dark:text-gray-500"
 							>
 								×
 							</button>
-						</button>
+						</div>
 					))}
 					<button
 						onClick={onNewAgent}

@@ -1,16 +1,11 @@
-import { HumanInterfaceRequest } from "@tokenring-ai/agent/HumanInterfaceRequest";
+import { AgentEventState } from "@tokenring-ai/agent/state/agentEventState";
 import React, { useEffect, useState } from "react";
-import {useAgentManager, useApp} from "../context/TokenRingAppProvider.tsx";
+import {useAgentManager} from "../context/TokenRingAppProvider.tsx";
 import HumanRequestDialog from "./HumanRequestDialog.tsx";
 
 type Message = {
 	type: "user" | "assistant" | "system";
 	content: string;
-};
-
-type PendingRequest = {
-	request: HumanInterfaceRequest;
-	sequence: number;
 };
 
 const ChatInstance = ({
@@ -24,47 +19,29 @@ const ChatInstance = ({
 	const agent = agentManager?.getAgent(agentId) || null;
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [input, setInput] = useState("");
-	const [pendingRequest, setPendingRequest] = useState<PendingRequest | null>(
-		null,
-	);
 
 	useEffect(() => {
 		if (!agent || !isActive) return;
 
-		const abortController = new AbortController();
-
-		(async () => {
-			for await (const event of agent.events(abortController.signal)) {
+		const unsubscribe = agent.subscribeState(AgentEventState, (state) => {
+			const newMessages: Message[] = [];
+			for (const event of state.events) {
 				switch (event.type) {
 					case "output.chat":
-						setMessages((prev) => [
-							...prev,
-							{ type: "assistant", content: event.data.content },
-						]);
+						newMessages.push({ type: "assistant", content: event.data.content });
 						break;
 					case "output.system":
-						setMessages((prev) => [
-							...prev,
-							{ type: "system", content: event.data.message },
-						]);
+						newMessages.push({ type: "system", content: event.data.message });
 						break;
 					case "input.received":
-						setMessages((prev) => [
-							...prev,
-							{ type: "user", content: event.data.message },
-						]);
-						break;
-					case "human.request":
-						setPendingRequest({
-							request: event.data.request,
-							sequence: event.data.sequence,
-						});
+						newMessages.push({ type: "user", content: event.data.message });
 						break;
 				}
 			}
-		})();
+			setMessages(newMessages);
+		});
 
-		return () => abortController.abort();
+		return () => unsubscribe();
 	}, [agent, isActive]);
 
 	const handleSubmit = (e: React.FormEvent) => {
@@ -74,11 +51,13 @@ const ChatInstance = ({
 		setInput("");
 	};
 
-	const handleHumanResponse = (sequence: number, response: any) => {
+	const agentEventState = agent?.getState(AgentEventState);
+	const pendingRequest = agentEventState?.waitingOn;
+
+	const handleHumanResponse = (requestId: string, response: any) => {
 		if (agent) {
-			agent.sendHumanResponse(sequence, response);
+			agent.sendHumanResponse(requestId, response);
 		}
-		setPendingRequest(null);
 	};
 
 	if (!isActive) return null;
@@ -87,8 +66,8 @@ const ChatInstance = ({
 		<div className="h-full flex flex-col bg-white dark:bg-gray-900">
 			{pendingRequest && (
 				<HumanRequestDialog
-					request={pendingRequest.request}
-					sequence={pendingRequest.sequence}
+					request={pendingRequest.data.request}
+					requestId={pendingRequest.data.id}
 					onResponse={handleHumanResponse}
 				/>
 			)}

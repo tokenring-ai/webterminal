@@ -3,13 +3,13 @@ import React, { useState } from "react";
 
 type HumanRequestDialogProps = {
 	request: HumanInterfaceRequest;
-	sequence: number;
-	onResponse: (sequence: number, response: any) => void;
+	requestId: string;
+	onResponse: (requestId: string, response: any) => void;
 };
 
 export default function HumanRequestDialog({
 	request,
-	sequence,
+	requestId,
 	onResponse,
 }: HumanRequestDialogProps) {
 	const [input, setInput] = useState("");
@@ -17,44 +17,41 @@ export default function HumanRequestDialog({
 
 	const handleSubmit = () => {
 		switch (request.type) {
-			case "ask":
+			case "askForText":
 			case "askForPassword":
-				onResponse(sequence, input);
+				onResponse(requestId, input);
 				break;
 			case "askForConfirmation":
-				onResponse(sequence, true);
+				onResponse(requestId, true);
 				break;
-			case "askForSelection":
-				onResponse(sequence, input);
+			case "askForSingleTreeSelection":
+				onResponse(requestId, input);
 				break;
-			case "askForMultipleSelections":
-				onResponse(sequence, Array.from(selected));
+			case "askForMultipleTreeSelection":
+				onResponse(requestId, Array.from(selected));
 				break;
 			default:
-				onResponse(sequence, null);
+				onResponse(requestId, null);
 		}
 	};
 
 	const handleCancel = () => {
-		onResponse(sequence, request.type === "askForConfirmation" ? false : null);
+		onResponse(requestId, request.type === "askForConfirmation" ? false : null);
+	};
+
+	const getMessage = () => {
+		if (request.type === "askForText" || request.type === "askForPassword" || request.type === "askForConfirmation") {
+			return request.message;
+		}
+		return "Input Required";
 	};
 
 	return (
 		<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
 			<div className="bg-gray-800 rounded-lg p-6 max-w-md w-full">
-				<h3 className="text-lg font-semibold mb-4">
-					{request.type === "ask" || request.type === "askForPassword"
-						? request.message
-						: request.type === "askForConfirmation"
-							? request.message
-							: request.type === "askForSelection"
-								? request.message
-								: request.type === "askForMultipleSelections"
-									? request.message
-									: "Input Required"}
-				</h3>
+				<h3 className="text-lg font-semibold mb-4">{getMessage()}</h3>
 
-				{(request.type === "ask" || request.type === "askForPassword") && (
+				{(request.type === "askForText" || request.type === "askForPassword") && (
 					<input
 						type={request.type === "askForPassword" ? "password" : "text"}
 						value={input}
@@ -62,46 +59,6 @@ export default function HumanRequestDialog({
 						className="w-full bg-gray-700 text-white px-3 py-2 rounded mb-4"
 						autoFocus
 					/>
-				)}
-
-				{request.type === "askForSelection" && (
-					<select
-						value={input}
-						onChange={(e) => setInput(e.target.value)}
-						className="w-full bg-gray-700 text-white px-3 py-2 rounded mb-4"
-						autoFocus
-					>
-						<option value="">Select...</option>
-						{request.choices.map((choice) => (
-							<option key={choice.value} value={choice.value}>
-								{choice.name}
-							</option>
-						))}
-					</select>
-				)}
-
-				{request.type === "askForMultipleSelections" && (
-					<div className="mb-4 max-h-60 overflow-y-auto">
-						{request.options.map((option) => (
-							<label key={option.value} className="flex items-center mb-2">
-								<input
-									type="checkbox"
-									checked={selected.has(option.value)}
-									onChange={(e) => {
-										const newSelected = new Set(selected);
-										if (e.target.checked) {
-											newSelected.add(option.value);
-										} else {
-											newSelected.delete(option.value);
-										}
-										setSelected(newSelected);
-									}}
-									className="mr-2"
-								/>
-								{option.name}
-							</label>
-						))}
-					</div>
 				)}
 
 				<div className="flex justify-end space-x-2">
