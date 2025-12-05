@@ -28,13 +28,13 @@ const ChatInstance = ({
 			for (const event of state.events) {
 				switch (event.type) {
 					case "output.chat":
-						newMessages.push({ type: "assistant", content: event.data.content });
+						newMessages.push({ type: "assistant", content: event.content });
 						break;
 					case "output.system":
-						newMessages.push({ type: "system", content: event.data.message });
+						newMessages.push({ type: "system", content: event.message });
 						break;
 					case "input.received":
-						newMessages.push({ type: "user", content: event.data.message });
+						newMessages.push({ type: "user", content: event.message });
 						break;
 				}
 			}
@@ -66,8 +66,8 @@ const ChatInstance = ({
 		<div className="h-full flex flex-col bg-white dark:bg-gray-900">
 			{pendingRequest && (
 				<HumanRequestDialog
-					request={pendingRequest.data.request}
-					requestId={pendingRequest.data.id}
+					request={pendingRequest.request}
+					requestId={pendingRequest.id}
 					onResponse={handleHumanResponse}
 				/>
 			)}

@@ -53,8 +53,7 @@ function TerminalCore() {
 				TestingPackage,
 			]);
 
-
-      const agentManager = app.requireService(AgentManager);
+      await app.startServices();
 
 			setApp(app);
 		};

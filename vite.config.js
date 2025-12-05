@@ -4,6 +4,7 @@ import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 export default defineConfig({
 	plugins: [nodePolyfills(), react()],
+	root: "/webterminal",
 	server: {
 		port: 5173,
 	},

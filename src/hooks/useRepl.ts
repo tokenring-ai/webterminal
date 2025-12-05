@@ -28,19 +28,19 @@ export function useRepl(agent: Agent | null) {
 			for (const event of state.events) {
 				switch (event.type) {
 					case "output.chat":
-						newChunks.push({ kind: "stdout", text: event.data.content });
+						newChunks.push({ kind: "stdout", text: event.content });
 						break;
 					case "output.reasoning":
-						newChunks.push({ kind: "system", text: event.data.content });
+						newChunks.push({ kind: "system", text: event.content });
 						break;
 					case "output.system":
 						newChunks.push({
-							kind: event.data.level || "system",
-							text: event.data.message,
+							kind: event.level || "system",
+							text: event.message,
 						});
 						break;
 					case "input.received":
-						newChunks.push({ kind: "user", text: `> ${event.data.message}` });
+						newChunks.push({ kind: "user", text: `> ${event.message}` });
 						break;
 				}
 			}
