@@ -53,9 +53,8 @@ function TerminalCore() {
 				TestingPackage,
 			]);
 
-      await app.startServices();
-
 			setApp(app);
+      app.run();
 		};
 
 		initialize();
