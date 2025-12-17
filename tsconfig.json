@@ -1,35 +1,46 @@
 {
-	"compilerOptions": {
-		"target": "ES2022",
-		"module": "NodeNext",
-		"lib": ["ES2023", "DOM", "DOM.Iterable"],
-		"moduleResolution": "NodeNext",
-		"resolveJsonModule": true,
-		"esModuleInterop": true,
-		"skipLibCheck": true,
-		"strict": true,
-		"allowJs": true,
-		"checkJs": true,
-		"noEmit": true,
-		"allowImportingTsExtensions": true,
-		"jsx": "react-jsx",
-		"types": ["bun-types"],
-		"outDir": "dist-ts",
-		"rootDir": "."
-	},
-	"include": ["src", "pkg/**/*.ts", "pkg/**/*.tsx", "types/**/*.d.ts"],
-	"exclude": [
-		"node_modules",
-		"**/dist",
-		"dist-ts",
-		"**/*.test.*",
-		"pkg/**/test/**",
-		"pkg/**/__tests__/**",
-		"pkg/**/examples/**",
-		"src/examples/**",
-		"pkg/**/hooks/**",
-		"pkg/inquirer-command-prompt/examples/**",
-		"pkg/inquirer-tree-selector/rollup.config.js",
-		"**/vitest.config.*"
-	]
+ "compilerOptions": {
+  "target": "ES2022",
+  "module": "NodeNext",
+  "lib": [
+   "ES2023",
+   "DOM",
+   "DOM.Iterable"
+  ],
+  "moduleResolution": "NodeNext",
+  "resolveJsonModule": true,
+  "esModuleInterop": true,
+  "skipLibCheck": true,
+  "strict": true,
+  "allowJs": true,
+  "checkJs": true,
+  "noEmit": true,
+  "allowImportingTsExtensions": true,
+  "jsx": "react-jsx",
+  "types": [
+   "bun-types"
+  ],
+  "outDir": "dist-ts",
+  "rootDir": "."
+ },
+ "include": [
+  "src",
+  "pkg/**/*.ts",
+  "pkg/**/*.tsx",
+  "types/**/*.d.ts"
+ ],
+ "exclude": [
+  "node_modules",
+  "**/dist",
+  "dist-ts",
+  "**/*.test.*",
+  "pkg/**/test/**",
+  "pkg/**/__tests__/**",
+  "pkg/**/examples/**",
+  "src/examples/**",
+  "pkg/**/hooks/**",
+  "pkg/inquirer-command-prompt/examples/**",
+  "pkg/inquirer-tree-selector/rollup.config.js",
+  "**/vitest.config.*"
+ ]
 }
