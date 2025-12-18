@@ -1,7 +1,7 @@
 import { AgentPackageConfigSchema } from "@tokenring-ai/agent";
 import { AIClientConfigSchema } from "@tokenring-ai/ai-client";
 import {ChatClientConfigSchema} from "@tokenring-ai/chat";
-import { CheckpointPackageConfigSchema } from "@tokenring-ai/checkpoint";
+import { CheckpointPluginConfigSchema } from "@tokenring-ai/checkpoint";
 import { FileSystemConfigSchema } from "@tokenring-ai/filesystem";
 import { z } from "zod";
 
@@ -12,7 +12,7 @@ type WebTerminalConfig = {
 	ai: z.input<typeof AIClientConfigSchema>;
   chat: z.input<typeof ChatClientConfigSchema>
 	filesystem: z.input<typeof FileSystemConfigSchema>;
-	checkpoint: z.input<typeof CheckpointPackageConfigSchema>;
+	checkpoint: z.input<typeof CheckpointPluginConfigSchema>;
 };
 
 export const defaultChatConfig = {

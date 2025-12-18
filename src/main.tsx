@@ -1,25 +1,23 @@
 
-import AgentPackage, {AgentManager} from "@tokenring-ai/agent";
-import AIClientPackage from "@tokenring-ai/ai-client";
+import AgentPlugin from "@tokenring-ai/agent/plugin";
+import AIClientPlugin from "@tokenring-ai/ai-client/plugin";
 import TokenRingApp, {PluginManager} from "@tokenring-ai/app";
-import ChatPackage from "@tokenring-ai/chat";
-import CheckpointPackage from "@tokenring-ai/checkpoint";
-import FilesystemPackage from "@tokenring-ai/filesystem";
-import MCPPackage from "@tokenring-ai/mcp";
-import MemoryPackage from "@tokenring-ai/memory";
-import QueuePackage from "@tokenring-ai/queue";
-import ScriptingPackage from "@tokenring-ai/scripting";
-import TestingPackage from "@tokenring-ai/testing";
-import BrowserAgentStoragePackage from "@tokenring-ai/browser-agent-storage";
-import BrowserFileSystemPackage from "@tokenring-ai/browser-file-system";
+import ChatPlugin from "@tokenring-ai/chat/plugin";
+import CheckpointPlugin from "@tokenring-ai/checkpoint/plugin";
+import FilesystemPlugin from "@tokenring-ai/filesystem/plugin";
+import MCPPlugin from "@tokenring-ai/mcp/plugin";
+import MemoryPlugin from "@tokenring-ai/memory/plugin";
+import QueuePlugin from "@tokenring-ai/queue/plugin";
+import ScriptingPlugin from "@tokenring-ai/scripting/plugin";
+import TestingPlugin from "@tokenring-ai/testing/plugin";
+import BrowserAgentStoragePlugin from "@tokenring-ai/browser-agent-storage/plugin";
+import BrowserFileSystemPlugin from "@tokenring-ai/browser-file-system/plugin";
 
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
-import agents from "./config/agents.ts";
 import { defaultChatConfig } from "./config/defaultChatConfig.ts";
 import { TokenRingAppProvider } from "./context/TokenRingAppProvider.js";
-import { ThemeProvider } from "./context/ThemeProvider.tsx";
 
 import "./index.css";
 
@@ -38,19 +36,19 @@ function TerminalCore() {
       app.addServices(pluginManager);
 
       await pluginManager.installPlugins([
-				AgentPackage,
-				AIClientPackage,
-				BrowserAgentStoragePackage,
-				BrowserFileSystemPackage,
-        ChatPackage,
-				CheckpointPackage,
-				//CodebasePackage,
-				FilesystemPackage,
-				MemoryPackage,
-        MCPPackage,
-				QueuePackage,
-        ScriptingPackage,
-				TestingPackage,
+				AgentPlugin,
+				AIClientPlugin,
+				BrowserAgentStoragePlugin,
+				BrowserFileSystemPlugin,
+        ChatPlugin,
+				CheckpointPlugin,
+				//CodebasePlugin,
+				FilesystemPlugin,
+				MemoryPlugin,
+        MCPPlugin,
+				QueuePlugin,
+        ScriptingPlugin,
+				TestingPlugin,
 			]);
 
 			setApp(app);

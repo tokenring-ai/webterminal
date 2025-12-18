@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import MainPanel from "./components/MainPanel.tsx";
 import Sidebar from "./components/Sidebar.tsx";
 import Terminal from "./components/Terminal.tsx";
 import TopBar from "./components/TopBar.tsx";
-import {useAgentManager, useApp} from "./context/TokenRingAppProvider.tsx";
+import {useAgentManager} from "./context/TokenRingAppProvider.tsx";
 import { ThemeProvider } from "./context/ThemeProvider.tsx";
 
 type Tab = {
