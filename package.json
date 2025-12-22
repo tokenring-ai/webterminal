@@ -44,7 +44,8 @@
     "tailwindcss": "^4.1.18",
     "trufflehog": "^0.0.5",
     "vite": "7.3.0",
-    "vite-plugin-node-polyfills": "^0.24.0"
+    "vite-plugin-node-polyfills": "^0.24.0",
+    "vitest": "catalog:"
   },
   "private": true,
   "scripts": {
@@ -52,7 +53,10 @@
     "build": "bunx --bun vite build",
     "dev": "bunx --bun vite",
     "preview": "bunx --bun vite preview",
-    "prepare": "husky"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
-  "type": "module"
+  "type": "module",
+  "license": "MIT",
 }
