@@ -4,8 +4,8 @@ import {useAgentManager} from "../context/TokenRingAppProvider.tsx";
 import HumanRequestDialog from "./HumanRequestDialog.tsx";
 
 type Message = {
-	type: "user" | "assistant" | "system";
-	content: string;
+	type: "output.chat" | "output.info" | "output.error" | "output.warning" | "input.received",
+	message: string;
 };
 
 const ChatInstance = ({
@@ -28,13 +28,11 @@ const ChatInstance = ({
 			for (const event of state.events) {
 				switch (event.type) {
 					case "output.chat":
-						newMessages.push({ type: "assistant", content: event.content });
-						break;
-					case "output.system":
-						newMessages.push({ type: "system", content: event.message });
-						break;
+          case 'output.info':
+          case 'output.warning':
+          case 'output.error':
 					case "input.received":
-						newMessages.push({ type: "user", content: event.message });
+						newMessages.push(event);
 						break;
 				}
 			}
@@ -62,6 +60,14 @@ const ChatInstance = ({
 
 	if (!isActive) return null;
 
+
+  const colorClasses = {
+    'input.received': 'text-blue-600 dark:text-blue-400',
+    'output.chat': 'text-gray-900 dark:text-white',
+    'output.info': 'text-gray-500 dark:text-gray-400',
+    'output.warning': 'text-yellow-600 dark:text-yellow-400',
+    'output.error': 'text-red-600 dark:text-red-400'
+  }
 	return (
 		<div className="h-full flex flex-col bg-white dark:bg-gray-900">
 			{pendingRequest && (
@@ -75,9 +81,9 @@ const ChatInstance = ({
 				{messages.map((msg, i) => (
 					<div
 						key={i}
-						className={`${msg.type === "user" ? "text-blue-600 dark:text-blue-400" : msg.type === "system" ? "text-gray-500 dark:text-gray-400" : "text-gray-900 dark:text-white"}`}
+						className={`${colorClasses[msg.type]}`}
 					>
-						{msg.content}
+						{msg.message}
 					</div>
 				))}
 			</div>

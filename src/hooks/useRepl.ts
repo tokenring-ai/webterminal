@@ -2,9 +2,12 @@ import type Agent from "@tokenring-ai/agent/Agent";
 import { AgentEventState } from "@tokenring-ai/agent/state/agentEventState";
 import { useCallback, useEffect, useState } from "react";
 
-const initialMessages = [{ kind: "system", text: "Welcome to WebTerminal!" }];
+const initialMessages : Chunk[] = [{type: "output.system", message: "Welcome to WebTerminal!\n" }];
 
-type Chunk = { kind: string; text: string };
+type Chunk = {
+  type: "output.chat" | "output.reasoning" | "output.system" | "output.info" | "output.warning" | "output.error" | "input.received";
+  message: string
+};
 
 const agentHistories = new Map<Agent, string[]>();
 const agentHistoryIndexes = new Map<Agent, number>();
@@ -28,20 +31,13 @@ export function useRepl(agent: Agent | null) {
 			for (const event of state.events) {
 				switch (event.type) {
 					case "output.chat":
-						newChunks.push({ kind: "stdout", text: event.content });
-						break;
 					case "output.reasoning":
-						newChunks.push({ kind: "system", text: event.content });
-						break;
-					case "output.system":
-						newChunks.push({
-							kind: event.level || "system",
-							text: event.message,
-						});
-						break;
-					case "input.received":
-						newChunks.push({ kind: "user", text: `> ${event.message}` });
-						break;
+          case 'output.info':
+          case 'output.warning':
+          case 'output.error':
+          case "input.received":
+            newChunks.push(event);
+            break;
 				}
 			}
 			setChunks(newChunks);

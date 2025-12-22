@@ -148,12 +148,12 @@ function Terminal({
 				className="flex-1 overflow-y-auto p-4 font-mono text-sm flex flex-col justify-end"
 			>
 				<div>
-					{chunks.map((l: { kind: string; text: string }, i: number) => (
+					{chunks.map((l, i: number) => (
 						<div
 							key={i}
-							className={`mb-2 whitespace-pre-wrap ${typeToColor[l.kind] || "text-gray-700 dark:text-gray-300"}`}
+							className={`mb-2 whitespace-pre-wrap ${typeToColor[l.type] || "text-gray-700 dark:text-gray-300"}`}
 						>
-							{l.text}
+							{l.message}
 						</div>
 					))}
 				</div>
