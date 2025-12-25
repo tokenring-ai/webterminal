@@ -1,4 +1,6 @@
+import {Agent} from "@tokenring-ai/agent";
 import { FileSystemService } from "@tokenring-ai/filesystem";
+import createIgnoreFilter from "@tokenring-ai/filesystem/tools/util/createIgnoreFilter";
 import {
 	ChevronDown,
 	ChevronRight,
@@ -39,6 +41,7 @@ function buildTree(paths: string[]): Record<string, TreeNode> {
 }
 
 type TreeNodeProps = {
+  agent: Agent;
 	node: TreeNode;
 	depth: number;
 	onFileOpen: (filePath: string) => void;
@@ -47,6 +50,7 @@ type TreeNodeProps = {
 };
 
 function TreeNodeComponent({
+	agent,
 	node,
 	depth,
 	onFileOpen,
@@ -70,7 +74,7 @@ function TreeNodeComponent({
 		try {
 			if (!team) return;
 			const fsService = team.services.requireItemByType(FileSystemService);
-			const content = await fsService.getFile(fullPath);
+			const content = await fsService.getFile(fullPath, agent);
 			const blob = new Blob([content || ""], {
 				type: "application/octet-stream",
 			});
@@ -95,7 +99,7 @@ function TreeNodeComponent({
 		try {
 			if (!team) return;
 			const fsService = team.services.requireItemByType(FileSystemService);
-			await fsService.deleteFile(fullPath);
+			await fsService.deleteFile(fullPath, agent);
 			await refreshTree();
 		} catch (err) {
 			setError && setError((err as Error).message);
@@ -111,9 +115,9 @@ function TreeNodeComponent({
 		try {
 			if (!team) return;
 			const fsService = team.services.requireItemByType(FileSystemService);
-			const content = await fsService.getFile(fullPath);
-			await fsService.writeFile(newPath, content || "");
-			await fsService.deleteFile(fullPath);
+			const content = await fsService.getFile(fullPath, agent);
+			await fsService.writeFile(newPath, content || "", agent);
+			await fsService.deleteFile(fullPath, agent);
 			await refreshTree();
 		} catch (err) {
 			setError && setError((err as Error).message);
@@ -202,6 +206,7 @@ function TreeNodeComponent({
 				<div className="pl-4 border-l border-gray-200 dark:border-gray-700">
 					{children.map((child) => (
 						<TreeNodeComponent
+              agent={agent}
 							key={child.__full__}
 							node={child}
 							depth={depth + 1}
@@ -221,8 +226,10 @@ function TreeNodeComponent({
  */
 export default function FileTree({
 	onFileOpen,
+  agent
 }: {
 	onFileOpen: (filePath: string) => void;
+  agent: Agent;
 }) {
 	const team = useApp();
 	const [treeData, setTreeData] = useState<Record<string, TreeNode> | null>(
@@ -237,12 +244,12 @@ export default function FileTree({
 			setError(null);
 			if (!team) return;
 			const fsService = team.services.requireItemByType(FileSystemService);
-			const ignoreFilter = await fsService.createIgnoreFilter();
+			const ignoreFilter = await createIgnoreFilter(fsService.getActiveFileSystem(agent));
 			const paths: string[] = [];
 			for await (const p of fsService.getDirectoryTree("", {
 				ignoreFilter,
 				recursive: true,
-			})) {
+			}, agent)) {
 				paths.push(p);
 			}
 			setTreeData(buildTree(paths));
@@ -269,7 +276,7 @@ export default function FileTree({
 			const fsService = team.services.requireItemByType(FileSystemService);
 			for (const file of files) {
 				const content = await file.text();
-				await fsService.writeFile(file.name, content);
+				await fsService.writeFile(file.name, content, agent);
 			}
 			await refreshTree();
 		} catch (err) {
@@ -337,7 +344,7 @@ export default function FileTree({
 							try {
 								const fsService =
 									team.services.requireItemByType(FileSystemService);
-								await fsService.writeFile(fileName, "");
+								await fsService.writeFile(fileName, "", agent);
 								await refreshTree();
 							} catch (err) {
 								setError((err as Error).message);
@@ -371,6 +378,7 @@ export default function FileTree({
 			<div className="space-y-1">
 				{rootNodes.map((n) => (
 					<TreeNodeComponent
+            agent={agent}
 						key={n.__full__}
 						node={n}
 						depth={0}

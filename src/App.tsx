@@ -28,6 +28,8 @@ function App() {
 	const [activeTerminalId, setActiveTerminalId] = useState<string | null>(null);
 	const [terminalHeight, setTerminalHeight] = useState(256);
 
+  const activeAgent = activeTerminalId ? agentManager?.getAgent(activeTerminalId) ?? null : null;
+
 	const handleNewChat = useCallback(async () => {
 		if (!agentManager) return;
 		const agent = await agentManager.spawnAgent({ agentType: "interactiveCodeAgent", headless: false });
@@ -87,6 +89,7 @@ function App() {
 					<div className="flex-1 flex flex-col overflow-hidden">
 						<div className="flex-1 overflow-hidden">
 							<MainPanel
+                agent={activeAgent}
 								activeView={activeView}
 								tabs={tabs}
 								onFileOpen={openFileTab}

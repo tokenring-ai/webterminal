@@ -1,4 +1,5 @@
 import { Editor } from "@monaco-editor/react";
+import {Agent} from "@tokenring-ai/agent";
 import { FileSystemService } from "@tokenring-ai/filesystem";
 import { AlertTriangle, Edit2, Save, Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
@@ -34,10 +35,12 @@ const ActionButton = ({
 );
 
 export default function FileViewer({
+  agent,
 	filePath,
 	onFileDeleted,
 	onFileRenamed,
 }: {
+  agent: Agent;
 	filePath: string;
 	onFileDeleted?: () => void;
 	onFileRenamed?: (newPath: string) => void;
@@ -58,7 +61,7 @@ export default function FileViewer({
 			try {
 				if (!team) throw new Error("Team not found");
 				const fsService = team.services.requireItemByType(FileSystemService);
-				const data = await fsService.getFile(filePath);
+				const data = await fsService.getFile(filePath, agent);
 				setContent(data);
 			} catch (e) {
 				setError((e as Error).message);
@@ -71,7 +74,7 @@ export default function FileViewer({
 		try {
 			if (!team) return;
 			const fsService = team.services.requireItemByType(FileSystemService);
-			await fsService.writeFile(filePath, content || "");
+			await fsService.writeFile(filePath, content || "", agent);
 			setDirty(false);
 		} catch (e) {
 			setError((e as Error).message);
@@ -84,7 +87,7 @@ export default function FileViewer({
 		try {
 			if (!team) return;
 			const fsService = team.services.requireItemByType(FileSystemService);
-			await fsService.deleteFile(filePath);
+			await fsService.deleteFile(filePath, agent);
 			if (onFileDeleted) onFileDeleted();
 		} catch (e) {
 			setError((e as Error).message);
@@ -100,9 +103,9 @@ export default function FileViewer({
 			if (!team) return;
 			const fsService = team.services.getItemByType(FileSystemService);
 			if (!fsService) throw new Error("FileSystem service not found");
-			const fileContent = await fsService.getFile(filePath);
-			await fsService.writeFile(newPath, fileContent || "");
-			await fsService.deleteFile(filePath);
+			const fileContent = await fsService.getFile(filePath, agent);
+			await fsService.writeFile(newPath, fileContent || "", agent);
+			await fsService.deleteFile(filePath, agent);
 			if (onFileRenamed) onFileRenamed(newPath);
 		} catch (e) {
 			setError((e as Error).message);

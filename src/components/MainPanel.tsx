@@ -1,3 +1,4 @@
+import {Agent} from "@tokenring-ai/agent";
 import React from "react";
 import ChatList from "./ChatList.tsx";
 import FileTree from "./FileTree.tsx";
@@ -13,6 +14,7 @@ type Tab = {
 };
 
 type MainPanelProps = {
+  agent: Agent | null
 	activeView: string;
 	tabs: Tab[];
 	onFileOpen: (filePath: string) => void;
@@ -22,6 +24,7 @@ type MainPanelProps = {
 };
 
 export default function MainPanel({
+  agent,
 	activeView,
 	tabs,
 	onFileOpen,
@@ -43,11 +46,11 @@ export default function MainPanel({
 					/>
 				</div>
 			)}
-			{activeView === "files" && (
+			{activeView === "files" && agent && (
 				<div className="flex-1 flex overflow-hidden">
 					{!treeCollapsed && (
 						<div className="w-64 border-r border-gray-300 dark:border-gray-700 overflow-y-auto p-4">
-							<FileTree onFileOpen={onFileOpen} />
+							<FileTree onFileOpen={onFileOpen} agent={agent} />
 						</div>
 					)}
 					{fileTab && (
@@ -60,6 +63,7 @@ export default function MainPanel({
 								{treeCollapsed ? "▶" : "◀"}
 							</button>
 							<FileViewer
+                agent={agent}
 								filePath={fileTab.filePath!}
 								onFileDeleted={() => onFileClose(fileTab.id)}
 								onFileRenamed={() => {}}
