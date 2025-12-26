@@ -2,7 +2,7 @@
   "name": "@tokenring-ai/web-terminal",
   "version": "0.0.1",
   "dependencies": {
-    "@ai-sdk/mcp": "^0.0.12",
+    "@ai-sdk/mcp": "^1.0.1",
     "@auth/express": "0.12.1",
     "@monaco-editor/react": "^4.7.0",
     "@tailwindcss/postcss": "^4.1.18",
@@ -26,7 +26,7 @@
     "express": "^5.2.1",
     "framer-motion": "^12.23.26",
     "husky": "^9.1.7",
-    "lucide-react": "^0.561.0",
+    "lucide-react": "^0.562.0",
     "react": "catalog:",
     "react-dom": "catalog:",
     "uuid": "^13.0.0",
