@@ -58,5 +58,5 @@
     "test:coverage": "vitest run --coverage"
   },
   "type": "module",
-  "license": "MIT",
+  "license": "MIT"
 }
