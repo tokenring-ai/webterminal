@@ -20,6 +20,7 @@ import { defaultChatConfig } from "./config/defaultChatConfig.ts";
 import { TokenRingAppProvider } from "./context/TokenRingAppProvider.js";
 
 import "./index.css";
+import {plugins} from "./plugins.ts";
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);
@@ -29,27 +30,13 @@ function TerminalCore() {
 
 	useEffect(() => {
 		const initialize = async () => {
-      const app = new TokenRingApp(import.meta.url, {}, defaultChatConfig);
+      const app = new TokenRingApp(import.meta.url, defaultChatConfig);
 
 
       const pluginManager = new PluginManager(app)
       app.addServices(pluginManager);
 
-      await pluginManager.installPlugins([
-				AgentPlugin,
-				AIClientPlugin,
-				BrowserAgentStoragePlugin,
-				BrowserFileSystemPlugin,
-        ChatPlugin,
-				CheckpointPlugin,
-				//CodebasePlugin,
-				FilesystemPlugin,
-				MemoryPlugin,
-        MCPPlugin,
-				QueuePlugin,
-        ScriptingPlugin,
-				TestingPlugin,
-			]);
+      await pluginManager.installPlugins(plugins)
 
 			setApp(app);
       app.run();

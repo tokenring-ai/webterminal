@@ -132,14 +132,14 @@ export default function SettingsPanel() {
 				</div>
 			</SettingsSection>
 
-			<SettingsSection title="Default Model">
+			<SettingsSection title="Default Models">
 				<div>
 					<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
 						Model Name
 					</label>
 					<StyledInput
 						type="text"
-						value={config.chat.defaultModel}
+						value={config.chat.defaultModels.join(", ")}
 						onChange={handleDefaultChange("defaultModel")}
 						placeholder="e.g., gpt-4.1"
 					/>
@@ -148,7 +148,7 @@ export default function SettingsPanel() {
 
 			<SettingsSection title="AI Providers">
 				<div className="space-y-4">
-					{Object.entries(config.ai.providers ?? {}).map(
+					{Object.entries(config.ai?.providers ?? {}).map(
 						([providerName, providerConfig]: [string, any]) => (
 							<div
 								key={providerName}
@@ -290,41 +290,6 @@ export default function SettingsPanel() {
 				</div>
 			</SettingsSection>
 
-			<SettingsSection title="Checkpoint">
-				<div>
-					<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-						Default Provider
-					</label>
-					<StyledInput
-						type="text"
-						value={config.checkpoint?.defaultProvider || ""}
-						onChange={(e) =>
-							setConfigurationValue(
-								"checkpoint.defaultProvider",
-								e.target.value,
-							)
-						}
-						placeholder="e.g., browser"
-					/>
-				</div>
-				<div className="space-y-3">
-					{Object.entries(config.checkpoint?.providers ?? {}).map(
-						([providerName, providerConfig]: [string, any]) => (
-							<div
-								key={providerName}
-								className="p-3 border border-gray-200 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-850"
-							>
-								<h5 className="font-medium text-sm text-gray-700 dark:text-gray-300">
-									{providerName}
-								</h5>
-								<div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-									Type: {providerConfig.type}
-								</div>
-							</div>
-						),
-					)}
-				</div>
-			</SettingsSection>
 		</div>
 	);
 }
