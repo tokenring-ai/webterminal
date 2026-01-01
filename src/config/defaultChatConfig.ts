@@ -18,7 +18,9 @@ export const defaultChatConfig = configSchema.parse({
     },
   },
   filesystem: {
-    defaultProvider: "browser",
+    agentDefaults: {
+      provider: "browser",
+    },
     providers: {
       browser: {
         type: "browser",

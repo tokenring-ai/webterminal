@@ -244,7 +244,7 @@ export default function FileTree({
 			setError(null);
 			if (!team) return;
 			const fsService = team.services.requireItemByType(FileSystemService);
-			const ignoreFilter = await createIgnoreFilter(fsService.getActiveFileSystem(agent));
+			const ignoreFilter = await createIgnoreFilter(fsService.requireActiveFileSystem(agent));
 			const paths: string[] = [];
 			for await (const p of fsService.getDirectoryTree("", {
 				ignoreFilter,

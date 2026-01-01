@@ -1,17 +1,4 @@
-
-import AgentPlugin from "@tokenring-ai/agent/plugin";
-import AIClientPlugin from "@tokenring-ai/ai-client/plugin";
 import TokenRingApp, {PluginManager} from "@tokenring-ai/app";
-import ChatPlugin from "@tokenring-ai/chat/plugin";
-import CheckpointPlugin from "@tokenring-ai/checkpoint/plugin";
-import FilesystemPlugin from "@tokenring-ai/filesystem/plugin";
-import MCPPlugin from "@tokenring-ai/mcp/plugin";
-import MemoryPlugin from "@tokenring-ai/memory/plugin";
-import QueuePlugin from "@tokenring-ai/queue/plugin";
-import ScriptingPlugin from "@tokenring-ai/scripting/plugin";
-import TestingPlugin from "@tokenring-ai/testing/plugin";
-import BrowserAgentStoragePlugin from "@tokenring-ai/browser-agent-storage/plugin";
-import BrowserFileSystemPlugin from "@tokenring-ai/browser-file-system/plugin";
 
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";

@@ -261,7 +261,7 @@ export default function SettingsPanel() {
 					</label>
 					<StyledInput
 						type="text"
-						value={config.filesystem?.defaultProvider || ""}
+						value={config.filesystem?.agentDefaults.provider || ""}
 						onChange={(e) =>
 							setConfigurationValue(
 								"filesystem.defaultProvider",
