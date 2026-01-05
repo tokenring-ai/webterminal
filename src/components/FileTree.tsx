@@ -74,7 +74,7 @@ function TreeNodeComponent({
 		try {
 			if (!team) return;
 			const fsService = team.services.requireItemByType(FileSystemService);
-			const content = await fsService.getFile(fullPath, agent);
+			const content = await fsService.readTextFile(fullPath, agent);
 			const blob = new Blob([content || ""], {
 				type: "application/octet-stream",
 			});
@@ -115,7 +115,7 @@ function TreeNodeComponent({
 		try {
 			if (!team) return;
 			const fsService = team.services.requireItemByType(FileSystemService);
-			const content = await fsService.getFile(fullPath, agent);
+			const content = await fsService.readTextFile(fullPath, agent);
 			await fsService.writeFile(newPath, content || "", agent);
 			await fsService.deleteFile(fullPath, agent);
 			await refreshTree();

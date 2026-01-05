@@ -61,7 +61,7 @@ export default function FileViewer({
 			try {
 				if (!team) throw new Error("Team not found");
 				const fsService = team.services.requireItemByType(FileSystemService);
-				const data = await fsService.getFile(filePath, agent);
+				const data = await fsService.readTextFile(filePath, agent);
 				setContent(data);
 			} catch (e) {
 				setError((e as Error).message);
@@ -103,7 +103,7 @@ export default function FileViewer({
 			if (!team) return;
 			const fsService = team.services.getItemByType(FileSystemService);
 			if (!fsService) throw new Error("FileSystem service not found");
-			const fileContent = await fsService.getFile(filePath, agent);
+			const fileContent = await fsService.readTextFile(filePath, agent);
 			await fsService.writeFile(newPath, fileContent || "", agent);
 			await fsService.deleteFile(filePath, agent);
 			if (onFileRenamed) onFileRenamed(newPath);
