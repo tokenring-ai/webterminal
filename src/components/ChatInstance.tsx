@@ -1,4 +1,5 @@
 import { AgentEventState } from "@tokenring-ai/agent/state/agentEventState";
+import {AgentExecutionState} from "@tokenring-ai/agent/state/agentExecutionState";
 import React, { useEffect, useState } from "react";
 import {useAgentManager} from "../context/TokenRingAppProvider.tsx";
 import HumanRequestDialog from "./HumanRequestDialog.tsx";
@@ -48,9 +49,7 @@ const ChatInstance = ({
 		agent.handleInput({ message: input });
 		setInput("");
 	};
-
-	const agentEventState = agent?.getState(AgentEventState);
-	const pendingRequest = agentEventState?.waitingOn;
+	const pendingRequest = agent?.getState(AgentExecutionState)?.waitingOn;
 
 	const handleHumanResponse = (requestId: string, response: any) => {
 		if (agent) {
@@ -70,10 +69,10 @@ const ChatInstance = ({
   }
 	return (
 		<div className="h-full flex flex-col bg-white dark:bg-gray-900">
-			{pendingRequest && (
+			{pendingRequest && pendingRequest.length > 0 && (
 				<HumanRequestDialog
-					request={pendingRequest.request}
-					requestId={pendingRequest.id}
+					request={pendingRequest[0].request}
+					requestId={pendingRequest[0].id}
 					onResponse={handleHumanResponse}
 				/>
 			)}
