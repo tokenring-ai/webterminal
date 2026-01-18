@@ -1,8 +1,10 @@
+import {QuestionResponseSchema} from "@tokenring-ai/agent/AgentEvents";
 import { AgentEventState } from "@tokenring-ai/agent/state/agentEventState";
 import {AgentExecutionState} from "@tokenring-ai/agent/state/agentExecutionState";
 import React, { useEffect, useState } from "react";
 import {useAgentManager} from "../context/TokenRingAppProvider.tsx";
 import HumanRequestDialog from "./HumanRequestDialog.tsx";
+import z from "zod";
 
 type Message = {
 	type: "output.chat" | "output.info" | "output.error" | "output.warning" | "input.received",
@@ -49,12 +51,10 @@ const ChatInstance = ({
 		agent.handleInput({ message: input });
 		setInput("");
 	};
-	const pendingRequest = agent?.getState(AgentExecutionState)?.waitingOn;
+	const waitingOn = agent?.getState(AgentExecutionState)?.waitingOn;
 
-	const handleHumanResponse = (requestId: string, response: any) => {
-		if (agent) {
-			agent.sendHumanResponse(requestId, response);
-		}
+	const handleHumanResponse = (requestId: string, response: z.output<typeof QuestionResponseSchema>) => {
+		agent?.sendQuestionResponse(requestId, {result: response});
 	};
 
 	if (!isActive) return null;
@@ -69,10 +69,10 @@ const ChatInstance = ({
   }
 	return (
 		<div className="h-full flex flex-col bg-white dark:bg-gray-900">
-			{pendingRequest && pendingRequest.length > 0 && (
+			{waitingOn && waitingOn.length > 0 && (
 				<HumanRequestDialog
-					request={pendingRequest[0].request}
-					requestId={pendingRequest[0].id}
+					request={waitingOn[0]}
+					requestId={waitingOn[0].requestId}
 					onResponse={handleHumanResponse}
 				/>
 			)}
