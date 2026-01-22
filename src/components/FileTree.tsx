@@ -1,6 +1,6 @@
 import {Agent} from "@tokenring-ai/agent";
 import { FileSystemService } from "@tokenring-ai/filesystem";
-import createIgnoreFilter from "@tokenring-ai/filesystem/tools/util/createIgnoreFilter";
+import createIgnoreFilter from "@tokenring-ai/filesystem/util/createIgnoreFilter";
 import {
 	ChevronDown,
 	ChevronRight,
