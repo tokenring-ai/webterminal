@@ -28,7 +28,7 @@ const interactiveCodeAgent = {
         {type: "current-message"},
       ]
     },
-    enabledTools: ["@tokenring-ai/agent/todo", "@tokenring-ai/filesystem/*"],
+    enabledTools: ["todo", "file_*", "terminal_*"],
   },
   filesystem: {
     selectedFiles: [".tokenring/knowledge/code.md"]
