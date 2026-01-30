@@ -1,9 +1,9 @@
-import { Moon, Sun } from "lucide-react";
-import React, { useState } from "react";
-import { useTheme } from "../context/ThemeProvider.tsx";
+import {Moon, Sun} from "lucide-react";
+import React, {useState} from "react";
+import {useTheme} from "../context/ThemeProvider.tsx";
 import useSession from "../hooks/useSession.js";
-import SignInDialog from "./SignInDialog.tsx";
 import NotificationDropdown from "./NotificationDropdown.tsx";
+import SignInDialog from "./SignInDialog.tsx";
 
 function TopBar() {
 	const { theme, setTheme } = useTheme();
@@ -64,7 +64,7 @@ function TopBar() {
 				<div className="relative">
 					<button
 						onClick={() => setShowNotifications(!showNotifications)}
-						className="relative p-2 rounded-lg hover:bg-gray-700 transition-colors"
+            className="relative p-2 rounded-lg hover:bg-gray-700 transition-colors cursor-pointer"
 					>
 						<svg
 							className="w-5 h-5 text-gray-300"
