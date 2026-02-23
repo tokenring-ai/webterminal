@@ -65,10 +65,8 @@ function App() {
 		(id: string) => {
 			if (!agentManager) return;
 			const tab = terminalTabs.find((t) => t.id === id);
-			if (tab) {
-				const agent = agentManager.getAgent(tab.agentId);
-				if (agent) agentManager.deleteAgent(agent);
-			}
+			if (tab?.agentId) agentManager.deleteAgent(tab.agentId, "User closed terminal tab");
+
 			setTerminalTabs((prev) => {
 				const newTabs = prev.filter((t) => t.id !== id);
 				if (activeTerminalId === id) {
