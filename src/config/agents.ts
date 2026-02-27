@@ -3,7 +3,8 @@ import {ChatAgentConfig} from "@tokenring-ai/chat/schema";
 import {FileSystemAgentConfig} from "@tokenring-ai/filesystem/schema";
 
 const interactiveCodeAgent = {
-  name: "Coding Agent",
+  agentType: "code",
+  displayName: "Coding Agent",
   description: "A general code assistant that directly executes development tasks",
   category: "Interactive",
   chat: {
@@ -35,6 +36,6 @@ const interactiveCodeAgent = {
   }
 } satisfies AgentConfig & ChatAgentConfig & FileSystemAgentConfig;
 
-export default {
+export default [
 	interactiveCodeAgent,
-};
+];

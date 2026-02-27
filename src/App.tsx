@@ -35,7 +35,7 @@ function App() {
 		const agent = await agentManager.spawnAgent({ agentType: "interactiveCodeAgent", headless: false });
 		const newTab: TerminalTab = {
 			id: agent.id,
-			title: agent.config.name,
+			title: agent.config.displayName,
 			agentId: agent.id,
 		};
 		setTerminalTabs((prev) => [...prev, newTab]);

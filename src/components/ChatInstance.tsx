@@ -1,6 +1,5 @@
 import {QuestionResponseSchema} from "@tokenring-ai/agent/AgentEvents";
 import { AgentEventState } from "@tokenring-ai/agent/state/agentEventState";
-import {AgentExecutionState} from "@tokenring-ai/agent/state/agentExecutionState";
 import React, { useEffect, useState } from "react";
 import {useAgentManager} from "../context/TokenRingAppProvider.tsx";
 import HumanRequestDialog from "./HumanRequestDialog.tsx";
@@ -51,7 +50,7 @@ const ChatInstance = ({
 		agent.handleInput({ message: input });
 		setInput("");
 	};
-	const waitingOn = agent?.getState(AgentExecutionState)?.waitingOn;
+	const waitingOn = agent?.getState(AgentEventState)?.latestExecutionState?.waitingOn;
 
 	const handleHumanResponse = (requestId: string, response: z.output<typeof QuestionResponseSchema>) => {
 		agent?.sendQuestionResponse(requestId, {result: response});
