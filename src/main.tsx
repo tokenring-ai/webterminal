@@ -17,7 +17,7 @@ function TerminalCore() {
 
 	useEffect(() => {
 		const initialize = async () => {
-      const app = new TokenRingApp(import.meta.url, defaultChatConfig);
+      const app = new TokenRingApp(defaultChatConfig);
 
 
       const pluginManager = new PluginManager(app)

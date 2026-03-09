@@ -4,6 +4,14 @@ import {configSchema} from "../plugins.ts";
 import agents from "./agents.ts";
 
 export const defaultChatConfig = configSchema.parse({
+  app: {
+    packageDirectory: 'n/a',
+    workingDirectory: 'n/a',
+    dataDirectory: 'n/a',
+    configFileName: 'n/a',
+    hostname: 'browser',
+    configSchema
+  },
   agents: {
     app: agents,
   },
@@ -27,11 +35,6 @@ export const defaultChatConfig = configSchema.parse({
       browser: {
         type: "browser",
       },
-    },
-  },
-  checkpoint: {
-    provider: {
-      type: "browser",
     },
   },
 } satisfies z.input<typeof configSchema>);
