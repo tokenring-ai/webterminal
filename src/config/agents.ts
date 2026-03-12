@@ -25,7 +25,6 @@ const interactiveCodeAgent = {
         {type: "task-plan"},
         {type: "tool-context"},
         {type: "search-files"},
-        {type: "selected-files"},
         {type: "current-message"},
       ]
     },

@@ -1,14 +1,15 @@
-import {QuestionResponseSchema} from "@tokenring-ai/agent/AgentEvents";
 import { AgentEventState } from "@tokenring-ai/agent/state/agentEventState";
 import React, { useEffect, useState } from "react";
 import {useAgentManager} from "../context/TokenRingAppProvider.tsx";
 import HumanRequestDialog from "./HumanRequestDialog.tsx";
-import z from "zod";
+import type {ParsedInteractionRequest} from "@tokenring-ai/agent/AgentEvents";
 
 type Message = {
 	type: "output.chat" | "output.info" | "output.error" | "output.warning" | "input.received",
 	message: string;
 };
+
+type QuestionInteraction = Extract<ParsedInteractionRequest, {type: "question"}>;
 
 const ChatInstance = ({
 	agentId,
@@ -27,34 +28,48 @@ const ChatInstance = ({
 
 		const unsubscribe = agent.subscribeState(AgentEventState, (state) => {
 			const newMessages: Message[] = [];
-			for (const event of state.events) {
-				switch (event.type) {
-					case "output.chat":
-          case 'output.info':
-          case 'output.warning':
-          case 'output.error':
-					case "input.received":
-						newMessages.push(event);
-						break;
+				for (const event of state.events) {
+					switch (event.type) {
+						case "output.chat":
+	          case 'output.info':
+	          case 'output.warning':
+	          case 'output.error':
+							newMessages.push(event);
+							break;
+						case "input.received":
+							newMessages.push({
+								type: event.type,
+								message: event.input.message,
+							});
+							break;
+					}
 				}
-			}
 			setMessages(newMessages);
 		});
 
 		return () => unsubscribe();
 	}, [agent, isActive]);
 
-	const handleSubmit = (e: React.FormEvent) => {
-		e.preventDefault();
-		if (!agent || !input.trim()) return;
-		agent.handleInput({ message: input });
-		setInput("");
-	};
-	const waitingOn = agent?.getState(AgentEventState)?.latestExecutionState?.waitingOn;
+		const handleSubmit = (e: React.FormEvent) => {
+			e.preventDefault();
+			if (!agent || !input.trim()) return;
+			agent.handleInput({ from: "WebTerminal user", message: input });
+			setInput("");
+		};
 
-	const handleHumanResponse = (requestId: string, response: z.output<typeof QuestionResponseSchema>) => {
-		agent?.sendQuestionResponse(requestId, {result: response});
-	};
+		const currentInputItem = agent?.getState(AgentEventState)?.currentlyExecutingInputItem ?? null;
+		const waitingOn = currentInputItem?.executionState.availableInteractions.find(
+			(interaction): interaction is QuestionInteraction => interaction.type === "question"
+		) ?? null;
+
+		const handleHumanResponse = (response: unknown) => {
+			if (!agent || !currentInputItem || !waitingOn) return;
+			agent.sendInteractionResponse({
+				requestId: currentInputItem.request.requestId,
+				interactionId: waitingOn.interactionId,
+				result: response,
+			});
+		};
 
 	if (!isActive) return null;
 
@@ -68,13 +83,12 @@ const ChatInstance = ({
   }
 	return (
 		<div className="h-full flex flex-col bg-white dark:bg-gray-900">
-			{waitingOn && waitingOn.length > 0 && (
-				<HumanRequestDialog
-					request={waitingOn[0]}
-					requestId={waitingOn[0].requestId}
-					onResponse={handleHumanResponse}
-				/>
-			)}
+				{waitingOn && (
+					<HumanRequestDialog
+						request={waitingOn}
+						onResponse={handleHumanResponse}
+					/>
+				)}
 			<div className="flex-1 overflow-y-auto p-4 space-y-4">
 				{messages.map((msg, i) => (
 					<div

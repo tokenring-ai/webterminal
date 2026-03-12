@@ -26,21 +26,26 @@ export function useRepl(agent: Agent | null) {
 	useEffect(() => {
 		if (!agent) return;
 
-		const unsubscribe = agent.subscribeState(AgentEventState, (state) => {
-			const newChunks: Chunk[] = [...initialMessages];
-			for (const event of state.events) {
-				switch (event.type) {
-					case "output.chat":
-					case "output.reasoning":
-          case 'output.info':
-          case 'output.warning':
-          case 'output.error':
-          case "input.received":
-            newChunks.push(event);
-            break;
+			const unsubscribe = agent.subscribeState(AgentEventState, (state) => {
+				const newChunks: Chunk[] = [...initialMessages];
+				for (const event of state.events) {
+					switch (event.type) {
+						case "output.chat":
+						case "output.reasoning":
+	          case 'output.info':
+	          case 'output.warning':
+	          case 'output.error':
+	            newChunks.push(event);
+	            break;
+	          case "input.received":
+	            newChunks.push({
+	              type: event.type,
+	              message: event.input.message,
+	            });
+	            break;
+					}
 				}
-			}
-			setChunks(newChunks);
+				setChunks(newChunks);
 		});
 
 		return () => unsubscribe();
@@ -63,10 +68,10 @@ export function useRepl(agent: Agent | null) {
 			}
 			agentHistoryIndexes.set(agent, -1);
 
-			agent.handleInput({ message: processedInput });
-		},
-		[agent],
-	);
+				agent.handleInput({ from: "WebTerminal user", message: processedInput });
+			},
+			[agent],
+		);
 
 	const getPreviousCommand = useCallback(() => {
 		if (!agent) return "";

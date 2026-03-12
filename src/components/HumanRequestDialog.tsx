@@ -1,42 +1,41 @@
-import {type ParsedQuestionRequest, QuestionRequestSchema} from "@tokenring-ai/agent/AgentEvents";
+import {type ParsedInteractionRequest} from "@tokenring-ai/agent/AgentEvents";
 import React, { useState } from "react";
-import z from "zod";
+
+type QuestionInteraction = Extract<ParsedInteractionRequest, {type: "question"}>;
 
 type HumanRequestDialogProps = {
-	request: ParsedQuestionRequest;
-	requestId: string;
-	onResponse: (requestId: string, response: any) => void;
+	request: QuestionInteraction;
+	onResponse: (response: unknown) => void;
 };
 
 export default function HumanRequestDialog({
 	request,
-	requestId,
 	onResponse,
 }: HumanRequestDialogProps) {
 	const [input, setInput] = useState("");
 	const [selected, setSelected] = useState<Set<string>>(new Set());
 
 	const handleSubmit = () => {
-    switch (request.question.type) {
-      case "text":
-        onResponse(requestId, input);
-        break;
-      case "treeSelect":
-        onResponse(requestId, Array.from(selected));
-        break;
-      case "fileSelect":
-        onResponse(requestId, Array.from(selected));
-        break;
-      case "form":
-        onResponse(requestId, {});
-        break;
-      default:
-        onResponse(requestId, null);
-    }
+	    switch (request.question.type) {
+	      case "text":
+	        onResponse(input);
+	        break;
+	      case "treeSelect":
+	        onResponse(Array.from(selected));
+	        break;
+	      case "fileSelect":
+	        onResponse(Array.from(selected));
+	        break;
+	      case "form":
+	        onResponse({});
+	        break;
+	      default:
+	        onResponse(null);
+	    }
 	};
 
 	const handleCancel = () => {
-		onResponse(requestId, null);
+			onResponse(null);
 	};
 
 	const getMessage = () => {
