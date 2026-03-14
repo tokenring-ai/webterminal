@@ -30,6 +30,7 @@ export const defaultChatConfig = configSchema.parse({
   filesystem: {
     agentDefaults: {
       provider: "browser",
+      workingDirectory: "/",
     },
     providers: {
       browser: {
