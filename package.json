@@ -24,14 +24,14 @@
     "clsx": "^2.1.1",
     "cookie-parser": "^1.4.7",
     "express": "^5.2.1",
-    "framer-motion": "^12.36.0",
+    "framer-motion": "^12.37.0",
     "husky": "^9.1.7",
     "lucide-react": "^0.577.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "uuid": "^13.0.0",
     "zod": "^4.3.6",
-    "zustand": "5.0.11"
+    "zustand": "5.0.12"
   },
   "devDependencies": {
     "typescript": "^5.9.3",
