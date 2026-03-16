@@ -5,11 +5,8 @@ import agents from "./agents.ts";
 
 export const defaultChatConfig = configSchema.parse({
   app: {
-    packageDirectory: 'n/a',
-    workingDirectory: 'n/a',
     dataDirectory: 'n/a',
     configFileName: 'n/a',
-    hostname: 'browser',
     configSchema
   },
   agents: {
