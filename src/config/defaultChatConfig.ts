@@ -18,7 +18,7 @@ export const defaultChatConfig = configSchema.parse({
   ai: {
     providers: {
       LocalLLama: {
-        provider: "openaiCompatible",
+        provider: "generic",
         baseURL: "http://192.168.15.25:11434/v1",
         apiKey: "sk-ABCD1234567890"
       },
