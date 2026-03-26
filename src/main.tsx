@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import { defaultChatConfig } from "./config/defaultChatConfig.ts";
-import { TokenRingAppProvider } from "./context/TokenRingAppProvider.js";
+import { TokenRingAppProvider } from "./context/TokenRingAppProvider.ts";
 
 import "./index.css";
 import {plugins} from "./plugins.ts";

@@ -12,7 +12,7 @@ import {
 	Trash2,
 } from "lucide-react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useApp } from "../context/TokenRingAppProvider.js";
+import { useApp } from "../context/TokenRingAppProvider.ts";
 
 type TreeNode = {
 	__children__: Record<string, TreeNode>;

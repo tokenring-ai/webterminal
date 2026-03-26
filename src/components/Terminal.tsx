@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import {useAgentManager} from "../context/TokenRingAppProvider.js";
-import { useRepl } from "../hooks/useRepl.js";
+import {useAgentManager} from "../context/TokenRingAppProvider.ts";
+import { useRepl } from "../hooks/useRepl.ts";
 
 type TerminalTab = {
 	id: string;

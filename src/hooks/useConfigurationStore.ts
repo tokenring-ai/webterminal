@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { defaultChatConfig } from "../config/defaultChatConfig.js";
+import { defaultChatConfig } from "../config/defaultChatConfig.ts";
 
 export const useConfigurationStore = () => {
 	const [config, setConfig] = useState(defaultChatConfig);

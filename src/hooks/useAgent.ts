@@ -1,6 +1,6 @@
 import {AgentManager} from "@tokenring-ai/agent";
 import type Agent from "@tokenring-ai/agent/Agent";
-import { useApp } from "../context/TokenRingAppProvider.js";
+import { useApp } from "../context/TokenRingAppProvider.ts";
 
 export function useAgent(agentId: string): Agent | null {
 	const app = useApp();
