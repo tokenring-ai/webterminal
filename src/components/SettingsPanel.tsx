@@ -271,23 +271,6 @@ export default function SettingsPanel() {
 						placeholder="e.g., browser"
 					/>
 				</div>
-				<div className="space-y-3">
-					{Object.entries(config.filesystem?.providers ?? {}).map(
-						([providerName, providerConfig]: [string, any]) => (
-							<div
-								key={providerName}
-								className="p-3 border border-gray-200 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-850"
-							>
-								<h5 className="font-medium text-sm text-gray-700 dark:text-gray-300">
-									{providerName}
-								</h5>
-								<div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-									Type: {providerConfig.type}
-								</div>
-							</div>
-						),
-					)}
-				</div>
 			</SettingsSection>
 
 		</div>

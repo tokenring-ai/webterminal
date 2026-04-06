@@ -1,6 +1,6 @@
 import AgentPlugin from "@tokenring-ai/agent/plugin";
 import AIClientPlugin from "@tokenring-ai/ai-client/plugin";
-import {TokenRingAppConfigSchema} from "@tokenring-ai/app/TokenRingApp";
+import {TokenRingAppConfigSchema} from "@tokenring-ai/app/schema";
 import BrowserStoragePlugin from "@tokenring-ai/browser-storage/plugin";
 import BrowserFileSystemPlugin from "@tokenring-ai/browser-file-system/plugin";
 import ChatPlugin from "@tokenring-ai/chat/plugin";

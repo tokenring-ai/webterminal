@@ -29,10 +29,6 @@ export const defaultChatConfig = configSchema.parse({
       provider: "browser",
       workingDirectory: "/",
     },
-    providers: {
-      browser: {
-        type: "browser",
-      },
-    },
   },
+  browserFilesystem: {},
 } satisfies z.input<typeof configSchema>);
