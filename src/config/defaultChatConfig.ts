@@ -6,12 +6,10 @@ import agents from "./agents.ts";
 export const defaultChatConfig = configSchema.parse({
   app: {
     dataDirectory: 'n/a',
-    configFileName: 'n/a',
+    configDirectories: [],
     configSchema
   },
-  agents: {
-    app: agents,
-  },
+  agents,
   chat: {
     defaultModels: ["LocalLLama:minimax/minimax-m2"],
   },
