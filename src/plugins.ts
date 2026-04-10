@@ -1,8 +1,8 @@
 import AgentPlugin from "@tokenring-ai/agent/plugin";
 import AIClientPlugin from "@tokenring-ai/ai-client/plugin";
 import {TokenRingAppConfigSchema} from "@tokenring-ai/app/schema";
-import BrowserStoragePlugin from "@tokenring-ai/browser-storage/plugin";
 import BrowserFileSystemPlugin from "@tokenring-ai/browser-file-system/plugin";
+import BrowserStoragePlugin from "@tokenring-ai/browser-storage/plugin";
 import ChatPlugin from "@tokenring-ai/chat/plugin";
 import FilesystemPlugin from "@tokenring-ai/filesystem/plugin";
 import MCPPlugin from "@tokenring-ai/mcp/plugin";
@@ -30,7 +30,6 @@ export const configSchema = z.object({
   ...AgentPlugin.config.shape,
   ...AIClientPlugin.config.shape,
   ...BrowserStoragePlugin.config.shape,
-  ...BrowserFileSystemPlugin.config.shape,
   ...ChatPlugin.config.shape,
   ...FilesystemPlugin.config.shape,
   ...MemoryPlugin.config.shape,

@@ -28,5 +28,4 @@ export const defaultChatConfig = configSchema.parse({
       workingDirectory: "/",
     },
   },
-  browserFilesystem: {},
 } satisfies z.input<typeof configSchema>);
