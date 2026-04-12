@@ -7,7 +7,7 @@ import SignInDialog from "./SignInDialog.tsx";
 
 function TopBar() {
 	const { theme, setTheme } = useTheme();
-	const { data: session, loading, signOut } = useSession() as any;
+	const { data: session, loading, signOut } = useSession();
 	const [showSignIn, setShowSignIn] = useState(false);
 	const [showNotifications, setShowNotifications] = useState(false);
 	const [notifications, setNotifications] = useState([
