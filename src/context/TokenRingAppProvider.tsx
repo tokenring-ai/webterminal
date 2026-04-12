@@ -1,6 +1,7 @@
 import {AgentManager} from "@tokenring-ai/agent";
-import TokenRingApp from "@tokenring-ai/app";
-import React, { createContext, useContext } from "react";
+import type TokenRingApp from "@tokenring-ai/app";
+import type React from "react";
+import { createContext, useContext } from "react";
 
 const AgentTeamContext = createContext<TokenRingApp | null>(null);
 

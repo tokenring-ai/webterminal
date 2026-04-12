@@ -1,5 +1,5 @@
-import {type ParsedInteractionRequest} from "@tokenring-ai/agent/AgentEvents";
-import React, { useState } from "react";
+import type {ParsedInteractionRequest} from "@tokenring-ai/agent/AgentEvents";
+import { useState } from "react";
 
 type QuestionInteraction = Extract<ParsedInteractionRequest, {type: "question"}>;
 
@@ -13,7 +13,7 @@ export default function HumanRequestDialog({
 	onResponse,
 }: HumanRequestDialogProps) {
 	const [input, setInput] = useState("");
-	const [selected, setSelected] = useState<Set<string>>(new Set());
+	const [selected, _setSelected] = useState<Set<string>>(new Set());
 
 	const handleSubmit = () => {
 	    switch (request.question.type) {

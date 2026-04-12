@@ -20,7 +20,7 @@ export function useRepl(agent: Agent | null) {
 		agentHistoryIndexes.set(agent, -1);
 	}
 
-	const commandHistory = agent ? agentHistories.get(agent) || [] : [];
+	const _commandHistory = agent ? agentHistories.get(agent) || [] : [];
 	const historyIndex = agent ? agentHistoryIndexes.get(agent) || -1 : -1;
 
 	useEffect(() => {
@@ -52,7 +52,7 @@ export function useRepl(agent: Agent | null) {
 	}, [agent]);
 
 	const handleInput = useCallback(
-		async (line: string) => {
+		(line: string) => {
 			if (!agent) return;
 
 			const processedInput = (line ?? "").trim();

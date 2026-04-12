@@ -1,6 +1,4 @@
-import {AgentConfig} from "@tokenring-ai/agent/schema";
-import {ChatAgentConfig} from "@tokenring-ai/chat/schema";
-import {FileSystemAgentConfig} from "@tokenring-ai/filesystem/schema";
+
 
 const code = {
   displayName: "Coding Agent",

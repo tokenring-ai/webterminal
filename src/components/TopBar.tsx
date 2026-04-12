@@ -1,5 +1,5 @@
 import {Moon, Sun} from "lucide-react";
-import React, {useState} from "react";
+import {useState} from "react";
 import {useTheme} from "../context/ThemeProvider.tsx";
 import useSession from "../hooks/useSession.ts";
 import NotificationDropdown from "./NotificationDropdown.tsx";

@@ -1,4 +1,4 @@
-import {z} from "zod";
+import type {z} from "zod";
 import {configSchema} from "../plugins.ts";
 
 import agents from "./agents.ts";

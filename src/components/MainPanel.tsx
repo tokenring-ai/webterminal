@@ -1,4 +1,4 @@
-import {Agent} from "@tokenring-ai/agent";
+import type {Agent} from "@tokenring-ai/agent";
 import React from "react";
 import ChatList from "./ChatList.tsx";
 import FileTree from "./FileTree.tsx";

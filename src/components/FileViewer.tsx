@@ -1,8 +1,9 @@
 import { Editor } from "@monaco-editor/react";
-import {Agent} from "@tokenring-ai/agent";
+import type {Agent} from "@tokenring-ai/agent";
 import { FileSystemService } from "@tokenring-ai/filesystem";
 import { AlertTriangle, Edit2, Save, Trash2 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
 import { useApp } from "../context/TokenRingAppProvider.tsx";
 import { useTheme } from "../context/ThemeProvider.tsx";
 

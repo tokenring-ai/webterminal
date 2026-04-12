@@ -1,4 +1,4 @@
-import {Agent} from "@tokenring-ai/agent";
+import type {Agent} from "@tokenring-ai/agent";
 import { FileSystemService } from "@tokenring-ai/filesystem";
 import createIgnoreFilter from "@tokenring-ai/filesystem/util/createIgnoreFilter";
 import {
@@ -11,7 +11,8 @@ import {
 	FolderOpen,
 	Trash2,
 } from "lucide-react";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import type React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useApp } from "../context/TokenRingAppProvider.ts";
 
 type TreeNode = {
@@ -87,7 +88,7 @@ function TreeNodeComponent({
 			document.body.removeChild(a);
 			URL.revokeObjectURL(url);
 		} catch (err) {
-			setError && setError((err as Error).message);
+			setError?.((err as Error).message);
 		}
 	};
 
@@ -102,7 +103,7 @@ function TreeNodeComponent({
 			await fsService.deleteFile(fullPath, agent);
 			await refreshTree();
 		} catch (err) {
-			setError && setError((err as Error).message);
+			setError?.((err as Error).message);
 		}
 	};
 
@@ -120,7 +121,7 @@ function TreeNodeComponent({
 			await fsService.deleteFile(fullPath, agent);
 			await refreshTree();
 		} catch (err) {
-			setError && setError((err as Error).message);
+			setError?.((err as Error).message);
 		}
 	};
 
@@ -236,7 +237,7 @@ export default function FileTree({
 		null,
 	);
 	const [error, setError] = useState<string | null>(null);
-	const [uploading, setUploading] = useState(false);
+	const [_uploading, setUploading] = useState(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	const refreshTree = useCallback(async () => {
@@ -262,7 +263,7 @@ export default function FileTree({
 		refreshTree();
 	}, [refreshTree]);
 
-	const handleUploadClick = () => {
+	const _handleUploadClick = () => {
 		fileInputRef.current?.click();
 	};
 

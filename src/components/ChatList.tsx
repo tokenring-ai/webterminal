@@ -1,4 +1,4 @@
-import React from "react"; // Removed useEffect, useState, useCallback, useRegistry
+
 // Removed ChatService and ChatHistoryService imports as they are no longer used directly here.
 
 type ChatTab = {
@@ -28,8 +28,7 @@ export default function ChatList({
 				RECENT AGENTS
 			</h2>
 			<div className="space-y-2">
-				{chatTabs &&
-					chatTabs.map((chatTab: ChatTab) => {
+				{chatTabs?.map((chatTab: ChatTab) => {
 						const { id, title } = chatTab;
 						return (
 							<button

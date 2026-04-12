@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import MainPanel from "./components/MainPanel.tsx";
 import Sidebar from "./components/Sidebar.tsx";
 import Terminal from "./components/Terminal.tsx";

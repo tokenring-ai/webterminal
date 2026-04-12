@@ -1,5 +1,6 @@
 import { AgentEventState } from "@tokenring-ai/agent/state/agentEventState";
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
 import {useAgentManager} from "../context/TokenRingAppProvider.tsx";
 import HumanRequestDialog from "./HumanRequestDialog.tsx";
 import type {ParsedInteractionRequest} from "@tokenring-ai/agent/AgentEvents";
