@@ -30,9 +30,9 @@ function App() {
 
   const activeAgent = activeTerminalId ? agentManager?.getAgent(activeTerminalId) ?? null : null;
 
-	const handleNewChat = useCallback(async () => {
+	const handleNewChat = useCallback(() => {
 		if (!agentManager) return;
-		const agent = await agentManager.spawnAgent({ agentType: "interactiveCodeAgent", headless: false });
+		const agent = agentManager.spawnAgent({ agentType: "interactiveCodeAgent", headless: false });
 		const newTab: TerminalTab = {
 			id: agent.id,
 			title: agent.config.displayName,

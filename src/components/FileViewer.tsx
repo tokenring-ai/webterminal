@@ -68,7 +68,7 @@ export default function FileViewer({
 				setError((e as Error).message);
 			}
 		}
-		load();
+		void load();
 	}, [filePath, team]);
 
 	const handleSave = async () => {

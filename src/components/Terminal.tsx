@@ -52,10 +52,10 @@ function Terminal({
 		}
 	}, [chunks]);
 
-	const handleSubmit = async (e: React.FormEvent) => {
+	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 		if (!input.trim()) return;
-		await handleInput(input);
+		handleInput(input);
 		setInput("");
 		setCurrentInputValueBeforeHistory("");
 	};

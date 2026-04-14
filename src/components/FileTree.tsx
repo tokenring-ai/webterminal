@@ -87,7 +87,7 @@ function TreeNodeComponent({
 			a.click();
 			document.body.removeChild(a);
 			URL.revokeObjectURL(url);
-		} catch (err) {
+		} catch (err: unknown) {
 			setError?.((err as Error).message);
 		}
 	};
@@ -102,7 +102,7 @@ function TreeNodeComponent({
 			const fsService = team.services.requireItemByType(FileSystemService);
 			await fsService.deleteFile(fullPath, agent);
 			await refreshTree();
-		} catch (err) {
+		} catch (err: unknown) {
 			setError?.((err as Error).message);
 		}
 	};
@@ -120,7 +120,7 @@ function TreeNodeComponent({
 			await fsService.writeFile(newPath, content || "", agent);
 			await fsService.deleteFile(fullPath, agent);
 			await refreshTree();
-		} catch (err) {
+		} catch (err: unknown) {
 			setError?.((err as Error).message);
 		}
 	};
@@ -260,7 +260,7 @@ export default function FileTree({
 	}, [team]);
 
 	useEffect(() => {
-		refreshTree();
+		void refreshTree();
 	}, [refreshTree]);
 
 	const _handleUploadClick = () => {
@@ -280,7 +280,7 @@ export default function FileTree({
 				await fsService.writeFile(file.name, content, agent);
 			}
 			await refreshTree();
-		} catch (err) {
+		} catch (err: unknown) {
 			setError((err as Error).message);
 		} finally {
 			setUploading(false);
@@ -347,7 +347,7 @@ export default function FileTree({
 									team.services.requireItemByType(FileSystemService);
 								await fsService.writeFile(fileName, "", agent);
 								await refreshTree();
-							} catch (err) {
+							} catch (err: unknown) {
 								setError((err as Error).message);
 							}
 						}}

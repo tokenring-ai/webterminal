@@ -29,7 +29,7 @@ export default function useSession() {
 	}, []);
 
 	useEffect(() => {
-		fetchSession();
+    void fetchSession();
 		// Optionally, poll or listen for changes
 	}, [fetchSession]);
 
@@ -43,7 +43,7 @@ export default function useSession() {
 			headers: { "Content-Type": "application/json" },
 		});
 		setSession(null);
-		fetchSession();
+    void fetchSession();
 	}, [fetchSession]);
 
 	return {

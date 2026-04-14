@@ -26,10 +26,10 @@ function TerminalCore() {
       await pluginManager.installPlugins(plugins)
 
 			setApp(app);
-      app.run();
+      void app.run();
 		};
 
-		initialize();
+    void initialize();
 	}, []);
 
 	if (!app) return <div>Loading...</div>;
