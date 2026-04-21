@@ -7,7 +7,7 @@ import {useCallback, useEffect, useState} from "react";
 export default function useSession() {
 	const [session, setSession] = useState<any>(null);
 	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState(null);
+	const [error, setError] = useState<Error | null>(null);
 
 	// Fetch session info
 	const fetchSession = useCallback(async () => {
@@ -22,7 +22,7 @@ export default function useSession() {
 			setSession(data?.user ? data : null);
 		} catch (e) {
 			setSession(null);
-			setError(e as any);
+			setError(e as Error);
 		} finally {
 			setLoading(false);
 		}
