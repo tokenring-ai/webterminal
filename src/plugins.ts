@@ -1,6 +1,6 @@
 import AgentPlugin from "@tokenring-ai/agent/plugin";
 import AIClientPlugin from "@tokenring-ai/ai-client/plugin";
-import {TokenRingAppConfigSchema} from "@tokenring-ai/app/schema";
+import { TokenRingAppConfigSchema } from "@tokenring-ai/app/schema";
 import BrowserFileSystemPlugin from "@tokenring-ai/browser-file-system/plugin";
 import BrowserStoragePlugin from "@tokenring-ai/browser-storage/plugin";
 import ChatPlugin from "@tokenring-ai/chat/plugin";
@@ -10,7 +10,7 @@ import MemoryPlugin from "@tokenring-ai/memory/plugin";
 import QueuePlugin from "@tokenring-ai/queue/plugin";
 import ScriptingPlugin from "@tokenring-ai/scripting/plugin";
 import TestingPlugin from "@tokenring-ai/testing/plugin";
-import {z} from "zod";
+import { z } from "zod";
 
 export const plugins = [
   AgentPlugin,

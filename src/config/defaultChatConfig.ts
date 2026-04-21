@@ -1,13 +1,13 @@
-import type {z} from "zod";
-import {configSchema} from "../plugins.ts";
+import type { z } from "zod";
+import { configSchema } from "../plugins.ts";
 
 import agents from "./agents.ts";
 
 export const defaultChatConfig = configSchema.parse({
   app: {
-    dataDirectory: 'n/a',
+    dataDirectory: "n/a",
     configDirectories: [],
-    configSchema
+    configSchema,
   },
   agents,
   chat: {
@@ -18,7 +18,7 @@ export const defaultChatConfig = configSchema.parse({
       LocalLLama: {
         provider: "generic",
         baseURL: "http://192.168.15.25:11434/v1",
-        apiKey: "sk-ABCD1234567890"
+        apiKey: "sk-ABCD1234567890",
       },
     },
   },

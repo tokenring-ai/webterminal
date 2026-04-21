@@ -1,5 +1,3 @@
-
-
 const code = {
   displayName: "Coding Agent",
   description: "A general code assistant that directly executes development tasks",
@@ -17,21 +15,15 @@ const code = {
       "IMPORTANT: Maintain a knowledge repository about the codebase in .tokenring/knowledge/code.md. Keep this file concise, with information " +
       "on the project structure, code patterns, conventions, etc. When you discover something new that fits these guidelines, update this file with the discovered knowledge for future reference.",
     context: {
-      initial: [
-        {type: "system-message"},
-        {type: "task-plan"},
-        {type: "tool-context"},
-        {type: "search-files"},
-        {type: "current-message"},
-      ]
+      initial: [{ type: "system-message" }, { type: "task-plan" }, { type: "tool-context" }, { type: "search-files" }, { type: "current-message" }],
     },
     enabledTools: ["todo", "file_*", "terminal_*"],
   },
   filesystem: {
-    selectedFiles: [".tokenring/knowledge/code.md"]
-  }
+    selectedFiles: [".tokenring/knowledge/code.md"],
+  },
 };
 
 export default {
-  code
+  code,
 };

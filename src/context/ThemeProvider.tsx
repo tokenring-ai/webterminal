@@ -2,8 +2,8 @@ import type React from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 
 const ThemeContext = createContext<{
-	theme: string;
-	setTheme: (theme: string) => void;
+  theme: string;
+  setTheme: (theme: string) => void;
 }>({ theme: "light", setTheme: () => {} });
 
 /**
@@ -12,31 +12,25 @@ const ThemeContext = createContext<{
  * @param {{children: React.ReactNode}} props
  */
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-	const [theme, setTheme] = useState(() => {
-		if (typeof window === "undefined") return "light";
-		const stored = localStorage.getItem("theme");
-		if (stored) return stored;
-		return window.matchMedia("(prefers-color-scheme: dark)").matches
-			? "dark"
-			: "light";
-	});
+  const [theme, setTheme] = useState(() => {
+    if (typeof window === "undefined") return "light";
+    const stored = localStorage.getItem("theme");
+    if (stored) return stored;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  });
 
-	useEffect(() => {
-		if (theme === "dark") {
-			document.documentElement.classList.add("dark");
-		} else {
-			document.documentElement.classList.remove("dark");
-		}
-		localStorage.setItem("theme", theme);
-	}, [theme]);
+  useEffect(() => {
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+    localStorage.setItem("theme", theme);
+  }, [theme]);
 
-	return (
-		<ThemeContext.Provider value={{ theme, setTheme }}>
-			{children}
-		</ThemeContext.Provider>
-	);
+  return <ThemeContext.Provider value={{ theme, setTheme }}>{children}</ThemeContext.Provider>;
 }
 
 export function useTheme() {
-	return useContext(ThemeContext);
+  return useContext(ThemeContext);
 }
