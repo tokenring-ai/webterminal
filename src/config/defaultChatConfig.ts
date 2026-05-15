@@ -7,7 +7,6 @@ export const defaultChatConfig = configSchema.parse({
   app: {
     dataDirectory: "n/a",
     configDirectories: [],
-    configSchema,
   },
   agents,
   chat: {
