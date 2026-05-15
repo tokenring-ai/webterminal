@@ -1,6 +1,6 @@
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
-import { useAgentManager } from "../context/TokenRingAppProvider.ts";
+import { useAgentManager } from "../context/TokenRingAppProvider.tsx";
 import { useRepl } from "../hooks/useRepl.ts";
 
 type TerminalTab = {

@@ -4,7 +4,7 @@ import createIgnoreFilter from "@tokenring-ai/filesystem/util/createIgnoreFilter
 import { ChevronDown, ChevronRight, Download, Edit2, FileText, Folder as FolderIcon, FolderOpen, Trash2 } from "lucide-react";
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useApp } from "../context/TokenRingAppProvider.ts";
+import { useApp } from "../context/TokenRingAppProvider.tsx";
 
 type TreeNode = {
   __children__: Record<string, TreeNode>;
